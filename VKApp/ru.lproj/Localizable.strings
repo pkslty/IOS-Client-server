@@ -1,0 +1,12 @@
+/* 
+  Localizable.strings
+  VKApp
+
+  Created by Denis Kuzmin on 02.04.2021.
+  
+*/
+
+"Loading..." = "Загрузка...";
+"Error" = "Ошибка";
+"Wrong username or password" = "Неправильное имя пользователя или пароль";
+"OK" = "ОК";

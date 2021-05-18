@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="NewsActionsCell" id="gTV-IL-0wX" customClass="NewsActionsCell" customModule="VKApp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="396" height="227"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="396" height="227"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YLV-Ew-zNK">
+                        <rect key="frame" x="0.0" y="0.0" width="396" height="227"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbu-ze-woO" customClass="LikeButton" customModule="VKApp" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="100" height="227"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="L5q-zw-9am"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="lbu-ze-woO" firstAttribute="leading" secondItem="YLV-Ew-zNK" secondAttribute="leading" id="RYi-kP-dGo"/>
+                            <constraint firstItem="lbu-ze-woO" firstAttribute="top" secondItem="YLV-Ew-zNK" secondAttribute="top" id="WIz-CN-2xa"/>
+                            <constraint firstItem="lbu-ze-woO" firstAttribute="height" secondItem="YLV-Ew-zNK" secondAttribute="height" id="pma-hr-nUZ"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstItem="YLV-Ew-zNK" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="6Kw-rl-0Ge"/>
+                <constraint firstAttribute="trailing" secondItem="YLV-Ew-zNK" secondAttribute="trailing" id="9kY-IW-UaZ"/>
+                <constraint firstItem="YLV-Ew-zNK" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="U3r-eR-JuJ"/>
+                <constraint firstAttribute="bottom" secondItem="YLV-Ew-zNK" secondAttribute="bottom" id="W6K-am-XXb"/>
+            </constraints>
+            <size key="customSize" width="396" height="227"/>
+            <connections>
+                <outlet property="likeButton" destination="lbu-ze-woO" id="HTH-Bq-zLb"/>
+            </connections>
+            <point key="canvasLocation" x="333.33333333333337" y="167.07589285714286"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

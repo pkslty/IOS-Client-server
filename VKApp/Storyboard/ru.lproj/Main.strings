@@ -1,0 +1,13 @@
+
+/* Class = "UILabel"; text = "Password"; ObjectID = "2IL-Vd-fqs"; */
+"2IL-Vd-fqs.text" = "Пароль";
+
+/* Class = "UILabel"; text = "Username"; ObjectID = "nlp-fF-gZR"; */
+"nlp-fF-gZR.text" = "Имя пользователя";
+
+/* Class = "UIButton"; normalTitle = "Log In"; ObjectID = "zkW-0J-Bhn"; */
+"zkW-0J-Bhn.normalTitle" = "Войти";
+
+"5me-H2-wNs.title" = "Друзья";
+
+"KjS-fb-QKD.title" = "Группы";

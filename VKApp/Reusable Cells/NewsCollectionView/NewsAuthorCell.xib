@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="NewsAuthorCell" id="gTV-IL-0wX" customClass="NewsAuthorCell" customModule="VKApp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="380" height="126"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="380" height="126"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="niI-m1-fzM">
+                        <rect key="frame" x="0.0" y="0.0" width="380" height="126"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jFj-Wp-T9R">
+                                <rect key="frame" x="0.0" y="0.0" width="126" height="126"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jiN-NS-jSd" customClass="RoundShadowView" customModule="VKApp" customModuleProvider="target">
+                                        <rect key="frame" x="10" y="5" width="116" height="116"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="jiN-NS-jSd" secondAttribute="height" multiplier="1:1" id="2Zl-Ad-1R3"/>
+                                            <constraint firstAttribute="height" priority="999" constant="55" id="OeE-dG-u4T"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="jiN-NS-jSd" firstAttribute="leading" secondItem="jFj-Wp-T9R" secondAttribute="leading" constant="10" id="AAl-42-gKh"/>
+                                    <constraint firstAttribute="width" secondItem="jFj-Wp-T9R" secondAttribute="height" multiplier="1:1" id="DgD-tD-85E"/>
+                                    <constraint firstItem="jiN-NS-jSd" firstAttribute="top" secondItem="jFj-Wp-T9R" secondAttribute="top" constant="5" id="dEJ-cE-Z6G"/>
+                                    <constraint firstAttribute="bottom" secondItem="jiN-NS-jSd" secondAttribute="bottom" constant="5" id="g8P-eo-1v3"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x0d-I9-v0Q">
+                                <rect key="frame" x="146" y="0.0" width="234" height="126"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ifa-yU-fHm">
+                                        <rect key="frame" x="0.0" y="38" width="41.5" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iBM-3s-zDA">
+                                        <rect key="frame" x="0.0" y="75.5" width="41.5" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="ifa-yU-fHm" firstAttribute="top" secondItem="x0d-I9-v0Q" secondAttribute="bottom" multiplier="0.3" id="34w-T2-hRB"/>
+                                    <constraint firstItem="iBM-3s-zDA" firstAttribute="leading" secondItem="x0d-I9-v0Q" secondAttribute="leading" id="FqU-Lk-WHr"/>
+                                    <constraint firstItem="ifa-yU-fHm" firstAttribute="leading" secondItem="x0d-I9-v0Q" secondAttribute="leading" id="MdF-uf-rwT"/>
+                                    <constraint firstItem="iBM-3s-zDA" firstAttribute="top" secondItem="x0d-I9-v0Q" secondAttribute="bottom" multiplier="0.6" id="xyW-Ib-x5f"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="jFj-Wp-T9R" secondAttribute="bottom" id="Ecq-pV-Yqw"/>
+                            <constraint firstItem="jFj-Wp-T9R" firstAttribute="leading" secondItem="niI-m1-fzM" secondAttribute="leading" id="dsp-JR-ehi"/>
+                            <constraint firstItem="jFj-Wp-T9R" firstAttribute="top" secondItem="niI-m1-fzM" secondAttribute="top" id="hd1-52-fgB"/>
+                        </constraints>
+                    </stackView>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstItem="niI-m1-fzM" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="6ms-ep-esb"/>
+                <constraint firstAttribute="trailing" secondItem="niI-m1-fzM" secondAttribute="trailingMargin" id="BIV-oM-fNm"/>
+                <constraint firstItem="niI-m1-fzM" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="b6a-nu-jXs"/>
+                <constraint firstAttribute="bottom" secondItem="niI-m1-fzM" secondAttribute="bottomMargin" id="b7e-rZ-rc3"/>
+            </constraints>
+            <size key="customSize" width="380" height="126"/>
+            <connections>
+                <outlet property="authorName" destination="ifa-yU-fHm" id="vUW-7O-aIv"/>
+                <outlet property="authorPhoto" destination="jiN-NS-jSd" id="rid-63-CvP"/>
+                <outlet property="postDate" destination="iBM-3s-zDA" id="T0G-zC-0DN"/>
+            </connections>
+            <point key="canvasLocation" x="321.73913043478262" y="95.089285714285708"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

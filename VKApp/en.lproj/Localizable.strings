@@ -1,0 +1,12 @@
+/* 
+  Localizable.strings
+  VKApp
+
+  Created by Denis Kuzmin on 02.04.2021.
+  
+*/
+
+"Loading..." = "Loading...";
+"Error" = "Error";
+"Wrong username or password" = "Wrong username or password";
+"OK" = "OK";
