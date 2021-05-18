@@ -5,7 +5,7 @@
 //  Created by Denis Kuzmin on 17.05.2021.
 //
 
-import Foundation
+import UIKit
 
 class Session {
     static let Instance = Session()
