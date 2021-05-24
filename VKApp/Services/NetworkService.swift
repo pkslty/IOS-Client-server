@@ -15,6 +15,7 @@ class NetworkService {
         urlConstructor.host = "api.vk.com"
         return urlConstructor
         }()
+    private let api_version = "5.132"
     
     func getFriends() {
         let parameters = [
@@ -61,14 +62,14 @@ class NetworkService {
         url.path = "/method/" + method
         url.queryItems = [
             URLQueryItem(name: "access_token", value: Session.Instance.token),
-            URLQueryItem(name: "v", value: "5.132")]
+            URLQueryItem(name: "v", value: api_version)]
         for (parameter, value) in parameters {
             url.queryItems?.append(
                 URLQueryItem(name: parameter, value: value))
         }
         
         guard let url = url.url else { return }
-        print(url)
+        //print(url)
         
         let task = session.dataTask(with: url) { data, response, error in
             guard error == nil else {
