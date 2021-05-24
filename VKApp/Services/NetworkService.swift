@@ -35,7 +35,7 @@ class NetworkService {
         }
     }
     
-    func searchGroups(for query: String, count: Int) {
+    func searchGroups(by query: String, count: Int) {
         let parameters = [
             "q" : query,
             "count" : String(count),

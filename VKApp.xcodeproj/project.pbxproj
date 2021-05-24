@@ -126,8 +126,6 @@
 				368485F5261BAA7F00CCCAF4 /* User.swift */,
 				368485F8261BAB1F00CCCAF4 /* Person.swift */,
 				36B7F6A8261C871200D1289D /* Post.swift */,
-				36E454EF265301F900CE2D17 /* Session.swift */,
-				36A351A1265BAF55004F095F /* NetworkService.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -169,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				369631B2261500E100AC37C0 /* AppDelegate.swift */,
+				36A351A3265BF7B8004F095F /* Services */,
 				368485F4261BAA1200CCCAF4 /* Model */,
 				369631B4261500E100AC37C0 /* SceneDelegate.swift */,
 				36C978B32621A79000FA1D12 /* Reusable Cells */,
@@ -204,6 +203,15 @@
 				3600EEE92632A444003D633F /* PhotoPresenterViewController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		36A351A3265BF7B8004F095F /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				36E454EF265301F900CE2D17 /* Session.swift */,
+				36A351A1265BAF55004F095F /* NetworkService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		36C978B22621A6BF00FA1D12 /* Custom View */ = {

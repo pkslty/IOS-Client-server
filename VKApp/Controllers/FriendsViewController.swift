@@ -118,7 +118,7 @@ extension FriendsViewController: UITableViewDataSource {
         ns.getFriends()
         ns.getPhotos(of: 151236995)
         ns.getGroups()
-        //ns.searchGroups(for: "kuzmin", count: 2)
+        ns.searchGroups(by: "111", count: 2)
         user.friends.append(Person(firstname: "Вадим", lastname: "Рощин",
                                    avatar: UIImage(named: "thumb-1")))
        
