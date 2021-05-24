@@ -14,7 +14,7 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var friendTable: UITableView!
     @IBOutlet weak var categoriesPicker: CategoriesPicker!
     
-    var user: User?
+    var user: User? = User(username: "Denis", firstname: "Denis", login: "1", password: "1")
     
     var categories = [String]()
     
@@ -33,7 +33,7 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
             getFriends(ofUser: &self.user!)
         }
         
-        user!.friends = user!.friends.sorted(by: <)
+		        user!.friends = user!.friends.sorted(by: <)
         
         for i in 0 ..< user!.friends.count {
             let ch = Character(user!.friends[i].lastname.first!.uppercased()).isLetter ?
@@ -114,7 +114,12 @@ extension FriendsViewController: UITableViewDataSource {
 
     private func getFriends(ofUser user: inout User) {
         
-       user.friends.append(Person(firstname: "Вадим", lastname: "Рощин",
+       let ns = NetworkService()
+        ns.getFriends()
+        ns.getPhotos(of: 151236995)
+        ns.getGroups()
+        //ns.searchGroups(for: "kuzmin", count: 2)
+        user.friends.append(Person(firstname: "Вадим", lastname: "Рощин",
                                    avatar: UIImage(named: "thumb-1")))
        
         user.friends.append(Person(firstname: "Илья", lastname: "Шумихин",
