@@ -17,10 +17,11 @@ class NetworkService {
         }()
     private let api_version = "5.132"
     
-    func getFriends(callBack: @escaping ([VKUser]) -> Void) {
+    func getFriends(of userId: Int = Session.Instance.userId, callBack: @escaping ([VKUser]) -> Void) {
         let parameters = [
             "order" : "hints",
             "fields" : "nickname,photo_200_orig",
+            "user_id" : String(userId),
         ]
         request(method: "friends.get", parameters: parameters) { data in
             guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKUser>>.self, from: data)
@@ -48,10 +49,10 @@ class NetworkService {
         }
     }
     
-    func searchGroups(by query: String, count: Int) {
+    func searchGroups(by query: String, resultsCount: Int) {
         let parameters = [
             "q" : query,
-            "count" : String(count),
+            "count" : String(resultsCount),
         ]
         request(method: "groups.search", parameters: parameters) { json in
             print("Search groups json: \(json)")

@@ -462,9 +462,9 @@
             filePath = "VKApp/Services/NetworkService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "26"
-            endingLineNumber = "26"
-            landmarkName = "getFriends(callBack:)"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
+            landmarkName = "getFriends(of:callBack:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
