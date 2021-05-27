@@ -29,6 +29,35 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let ns = NetworkService()
+        ns.getFriends { friends in
+            for friend in friends {
+                print("fiend id: \(friend.id)")
+                print("first name: \(friend.firstName)")
+                print("last name: \(friend.lastName)")
+            }
+        }
+        ns.getPhotos(of: 151236995) { photos in
+            for photo in photos {
+                print("album id: \(photo.albumId)")
+                print("date: \(photo.date)")
+                print("ownerId: \(photo.ownerId)")
+                print("hasTags: \(photo.hasTags)")
+                print("sizes: \(photo.sizes)")
+            }
+        }
+        ns.getPhotos(of: 2723571) { photos in
+            for photo in photos {
+                print("album id: \(photo.albumId)")
+                print("date: \(photo.date)")
+                print("ownerId: \(photo.ownerId)")
+                print("hasTags: \(photo.hasTags)")
+                print("sizes: \(photo.sizes)")
+            }
+        }
+        ns.getGroups()
+        ns.searchGroups(by: "111", count: 2)
+        
         if self.user != nil {
             getFriends(ofUser: &self.user!)
         }
@@ -114,11 +143,7 @@ extension FriendsViewController: UITableViewDataSource {
 
     private func getFriends(ofUser user: inout User) {
         
-       let ns = NetworkService()
-        ns.getFriends()
-        ns.getPhotos(of: 151236995)
-        ns.getGroups()
-        ns.searchGroups(by: "111", count: 2)
+       
         user.friends.append(Person(firstname: "Вадим", lastname: "Рощин",
                                    avatar: UIImage(named: "thumb-1")))
        

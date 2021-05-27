@@ -17,22 +17,34 @@ class NetworkService {
         }()
     private let api_version = "5.132"
     
-    func getFriends() {
+    func getFriends(callBack: @escaping ([VKUser]) -> Void) {
         let parameters = [
             "order" : "hints",
-            "fields" : "nickname",
+            "fields" : "nickname,photo_200_orig",
         ]
-        request(method: "friends.get", parameters: parameters) { json in
-            print("Friends json: \(json)")
+        request(method: "friends.get", parameters: parameters) { data in
+            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKUser>>.self, from: data)
+            else {
+                print("JSON Decode fail")
+                return
+            }
+            callBack(vkResponse.response.items)
         }
     }
     
-    func getGroups() {
+    func getGroups(of userId: Int = Session.Instance.userId, callBack: @escaping ([VKGroup]) -> Void) {
         let parameters = [
             "extended" : "1",
+            "user_id" : String(userId),
         ]
-        request(method: "groups.get", parameters: parameters) { json in
-            print("Groups json: \(json)")
+        
+        request(method: "groups.get", parameters: parameters) { data in
+            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKGroup>>.self, from: data)
+            else {
+                print("JSON Decode fail")
+                return
+            }
+            callBack(vkResponse.response.items)
         }
     }
     
@@ -47,18 +59,23 @@ class NetworkService {
 
     }
     
-    func getPhotos(of userId: Int) {
+    func getPhotos(of userId: Int, callBack: @escaping ([VKPhoto]) -> Void) {
         let parameters = [
             "owner_id" : String(userId),
             "extended" : "1",
         ]
-        request(method: "photos.getAll", parameters: parameters) { json in
-            print("Photos json: \(json)")
+        request(method: "photos.getAll", parameters: parameters) { data in
+            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKPhoto>>.self, from: data)
+            else {
+                print("JSON Decode fail")
+                return
+            }
+            callBack(vkResponse.response.items)
         }
 
     }
     
-    private func request(method: String, parameters: [String: String], completionBlock: @escaping (Any) -> Void) {
+    private func request(method: String, parameters: [String: String], completionBlock: @escaping (Data) -> Void) {
         url.path = "/method/" + method
         url.queryItems = [
             URLQueryItem(name: "access_token", value: Session.Instance.token),
@@ -69,7 +86,7 @@ class NetworkService {
         }
         
         guard let url = url.url else { return }
-        //print(url)
+        print(url)
         
         let task = session.dataTask(with: url) { data, response, error in
             guard error == nil else {
@@ -77,15 +94,8 @@ class NetworkService {
             return
             }
             guard let data = data else { return }
-            do {
-                let json = try JSONSerialization.jsonObject(
-                    with: data,
-                    options: .allowFragments)
-                completionBlock(json)
-            }
-            catch {
-                print("JSON serialization error: \(error)")
-            }
+            completionBlock(data)
+
         }
         task.resume()
 
