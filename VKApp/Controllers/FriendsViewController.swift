@@ -31,13 +31,14 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
         
         let ns = NetworkService()
         ns.getFriends { friends in
+            print("FRIENDS")
             for friend in friends {
                 print("fiend id: \(friend.id)")
                 print("first name: \(friend.firstName)")
                 print("last name: \(friend.lastName)")
             }
         }
-        ns.getPhotos(of: 151236995) { photos in
+        /*ns.getPhotos(of: 151236995) { photos in
             for photo in photos {
                 print("album id: \(photo.albumId)")
                 print("date: \(photo.date)")
@@ -45,8 +46,9 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
                 print("hasTags: \(photo.hasTags)")
                 print("sizes: \(photo.sizes)")
             }
-        }
+        }*/
         ns.getPhotos(of: 2723571) { photos in
+            print("PHOTOS")
             for photo in photos {
                 print("album id: \(photo.albumId)")
                 print("date: \(photo.date)")
@@ -55,7 +57,16 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
                 print("sizes: \(photo.sizes)")
             }
         }
-        ns.getGroups()
+        ns.getGroups() { groups in
+            print("GROUPS")
+            for group in groups {
+                print("group id: \(group.id)")
+                print("name: \(group.name)")
+                print("isMember: \(group.isMember)")
+                print("photo200: \(group.photo200UrlString)")
+                print("is Closed: \(group.isClosed)")
+            }
+        }
         ns.searchGroups(by: "111", count: 2)
         
         if self.user != nil {
