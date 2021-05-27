@@ -49,13 +49,18 @@ class NetworkService {
         }
     }
     
-    func searchGroups(by query: String, resultsCount: Int) {
+    func searchGroups(by query: String, resultsCount: Int, callBack: @escaping ([VKGroup]) -> Void) {
         let parameters = [
             "q" : query,
             "count" : String(resultsCount),
         ]
-        request(method: "groups.search", parameters: parameters) { json in
-            print("Search groups json: \(json)")
+        request(method: "groups.search", parameters: parameters) { data in
+            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKGroup>>.self, from: data)
+            else {
+                print("JSON Decode fail")
+                return
+            }
+            callBack(vkResponse.response.items)
         }
 
     }
