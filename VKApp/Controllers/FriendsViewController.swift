@@ -67,7 +67,7 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
                 print("is Closed: \(group.isClosed)")
             }
         }
-        ns.searchGroups(by: "111", resultsCount: 2)
+        //ns.searchGroups(by: "111", resultsCount: 2)
         
         if self.user != nil {
             getFriends(ofUser: &self.user!)
