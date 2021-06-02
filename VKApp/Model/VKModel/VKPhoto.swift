@@ -12,7 +12,7 @@ struct VKPhoto: Decodable {
     let id: Int
     let ownerId: Int
     let hasTags: Bool
-    let sizes: [VKPhotoSize]?
+    let sizes: [VKPhotoSize]
     
     enum CodingKeys: String, CodingKey {
         case albumId = "album_id"

@@ -14,7 +14,7 @@ class VKRealmPhoto: Object, Decodable {
     @objc dynamic var id: Int = 0
     @objc dynamic var ownerId: Int = 0
     @objc dynamic var hasTags: Bool = false
-    @objc dynamic var sizes: [VKRealmPhotoSize]
+    var sizes = List<VKRealmPhotoSize>()
     
     enum CodingKeys: String, CodingKey {
         case albumId = "album_id"

@@ -17,14 +17,14 @@ class NetworkService {
         }()
     private let api_version = "5.132"
     
-    func getFriends(of userId: Int = Session.Instance.userId, callBack: @escaping ([VKUser]) -> Void) {
+    func getFriends(of userId: Int = Session.Instance.userId, callBack: @escaping ([VKRealmUser]) -> Void) {
         let parameters = [
             "order" : "hints",
             "fields" : "nickname,photo_200_orig",
             "user_id" : String(userId),
         ]
         request(method: "friends.get", parameters: parameters) { data in
-            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKUser>>.self, from: data)
+            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKRealmUser>>.self, from: data)
             else {
                 print("JSON Decode fail")
                 return
@@ -33,14 +33,14 @@ class NetworkService {
         }
     }
     
-    func getGroups(of userId: Int = Session.Instance.userId, callBack: @escaping ([VKGroup]) -> Void) {
+    func getGroups(of userId: Int = Session.Instance.userId, callBack: @escaping ([VKRealmGroup]) -> Void) {
         let parameters = [
             "extended" : "1",
             "user_id" : String(userId),
         ]
         
         request(method: "groups.get", parameters: parameters) { data in
-            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKGroup>>.self, from: data)
+            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKRealmGroup>>.self, from: data)
             else {
                 print("JSON Decode fail")
                 return
@@ -49,13 +49,13 @@ class NetworkService {
         }
     }
     
-    func searchGroups(by query: String, resultsCount: Int, callBack: @escaping ([VKGroup]) -> Void) {
+    func searchGroups(by query: String, resultsCount: Int, callBack: @escaping ([VKRealmGroup]) -> Void) {
         let parameters = [
             "q" : query,
             "count" : String(resultsCount),
         ]
         request(method: "groups.search", parameters: parameters) { data in
-            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKGroup>>.self, from: data)
+            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKRealmGroup>>.self, from: data)
             else {
                 print("JSON Decode fail")
                 return
@@ -65,13 +65,13 @@ class NetworkService {
 
     }
     
-    func getPhotos(of userId: Int, callBack: @escaping ([VKPhoto]) -> Void) {
+    func getPhotos(of userId: Int, callBack: @escaping ([VKRealmPhoto]) -> Void) {
         let parameters = [
             "owner_id" : String(userId),
             "extended" : "1",
         ]
         request(method: "photos.getAll", parameters: parameters) { data in
-            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKPhoto>>.self, from: data)
+            guard let vkResponse = try? JSONDecoder().decode(VKResponse<VKItems<VKRealmPhoto>>.self, from: data)
             else {
                 print("JSON Decode fail")
                 return
