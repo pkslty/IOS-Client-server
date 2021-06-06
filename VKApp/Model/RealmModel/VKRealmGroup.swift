@@ -21,6 +21,10 @@ class VKRealmGroup: Object, Decodable {
     @objc dynamic var photo100UrlString = String()
     @objc dynamic var photo200UrlString =  String()
     
+    override static func primaryKey() -> String? {
+        "id"
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id
         case name

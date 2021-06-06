@@ -240,7 +240,7 @@
                     <navigationItem key="navigationItem" title="Friends" id="R1G-B1-7nm">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="lock.fill" catalog="system" id="p1F-jp-Ipd">
                             <connections>
-                                <segue destination="cbW-K8-kSW" kind="unwind" unwindAction="unwindActionWithUnwindSegue:" id="Qtr-GG-mGr"/>
+                                <segue destination="cbW-K8-kSW" kind="unwind" unwindAction="unwindActionWithUnwindSegue:" id="axe-bB-wF2"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -420,9 +420,6 @@
                     <navigationItem key="navigationItem" title="Groups" largeTitleDisplayMode="always" id="JmE-A2-0Rl">
                         <barButtonItem key="leftBarButtonItem" title="Item" id="PkP-rL-Pxo">
                             <imageReference key="image" image="lock.fill" catalog="system" symbolScale="large"/>
-                            <connections>
-                                <segue destination="A9T-rD-l6P" kind="unwind" unwindAction="unwindActionWithUnwindSegue:" id="NhT-R2-RZN"/>
-                            </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="MlD-rh-i4K">
                             <connections>
@@ -432,7 +429,6 @@
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eQC-OW-fUt" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <exit id="A9T-rD-l6P" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2787" y="-75"/>
         </scene>

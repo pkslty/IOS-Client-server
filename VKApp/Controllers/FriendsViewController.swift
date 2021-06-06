@@ -55,6 +55,10 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
                 print("ownerId: \(photo.ownerId)")
                 print("hasTags: \(photo.hasTags)")
                 print("sizes: \(photo.sizes)")
+                print("text: \(photo.text)")
+                print("likes: \(photo.likes)")
+                print("userLike: \(photo.userLike)")
+                print("reposts: \(photo.reposts)")
             }
         }
         ns.getGroups() { groups in

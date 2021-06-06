@@ -12,10 +12,39 @@ class WebLoginViewController: UIViewController {
 
     @IBOutlet weak var webView: WKWebView!
     
+    @IBAction func unwindAction(unwindSegue: UIStoryboardSegue) {
+        let storage = WKWebsiteDataStore.default()
+        storage.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+            records.forEach { record in
+                storage.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), for: [record]) { [self] in
+                    Session.Instance.token = String()
+                    Session.Instance.userId = 0
+                    request()
+                }
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         webView.navigationDelegate = self
+        request()
+        
+    }
+    
+
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+    private func request() {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "oauth.vk.com"
@@ -34,17 +63,6 @@ class WebLoginViewController: UIViewController {
         webView.load(request)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
 extension WebLoginViewController: WKNavigationDelegate {

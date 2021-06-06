@@ -15,6 +15,14 @@ class VKRealmPhoto: Object, Decodable {
     @objc dynamic var ownerId: Int = 0
     @objc dynamic var hasTags: Bool = false
     var sizes = List<VKRealmPhotoSize>()
+    @objc dynamic var text = String()
+    @objc dynamic var userLike: Bool = false
+    @objc dynamic var likes: Int = 0
+    @objc dynamic var reposts: Int = 0
+    
+    override static func primaryKey() -> String? {
+        "id"
+    }
     
     enum CodingKeys: String, CodingKey {
         case albumId = "album_id"
@@ -23,6 +31,36 @@ class VKRealmPhoto: Object, Decodable {
         case ownerId = "owner_id"
         case hasTags = "has_tags"
         case sizes
+        case text
+        case likes
+        case reposts
+    }
+    enum LikesCodingKeys: String, CodingKey {
+        case userLike = "user_likes"
+        case count
+    }
+    enum RepostsCodingKeys: String, CodingKey {
+        case count
+    }
+    
+    convenience required init(from decoder: Decoder) throws {
+        self.init()
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        print(values)
+        self.albumId = try values.decode(Int.self, forKey: .albumId)
+        print(self.albumId)
+        self.date = try values.decode(Int.self, forKey: .date)
+        self.id = try values.decode(Int.self, forKey: .id)
+        self.ownerId = try values.decode(Int.self, forKey: .ownerId)
+        self.hasTags = try values.decode(Bool.self, forKey: .hasTags)
+        self.sizes = try values.decode(List<VKRealmPhotoSize>.self, forKey: .sizes)
+        self.text = try values.decode(String.self, forKey: CodingKeys.text)
+        let likes = try values.nestedContainer(keyedBy: LikesCodingKeys.self, forKey: .likes)
+        self.userLike = try likes.decode(Int.self, forKey: .userLike) == 1 ? true : false
+        self.likes = try likes.decode(Int.self, forKey: .count)
+        let reposts = try values.nestedContainer(keyedBy: RepostsCodingKeys.self, forKey: .reposts)
+        self.reposts = try reposts.decode(Int.self, forKey: .count)
+        
     }
     
 }
@@ -40,3 +78,4 @@ class VKRealmPhotoSize: Object, Decodable {
         case width
     }
 }
+

@@ -15,6 +15,10 @@ class VKRealmUser: Object, Decodable {
     @objc dynamic var nickName = String()
     @objc dynamic var avatarUrlString = String()
     
+    override static func primaryKey() -> String? {
+        "id"
+    }
+    
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"
         case id
