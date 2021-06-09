@@ -120,7 +120,9 @@ class AllGroupsViewController: UIViewController, UITableViewDelegate {
                             }
                         }
                     }
-                    else if string.trimmingCharacters(in: .whitespaces).lowercased().contains(keyword) {
+                    else if string.trimmingCharacters(in: .whitespaces)
+                                .lowercased()
+                                .contains(keyword) {
                         filtered[i].rows.append(row)
                     }
                 }
@@ -174,9 +176,9 @@ extension AllGroupsViewController: UITableViewDataSource {
         else { return UITableViewCell() }
         let num = sections[indexPath.section].rows[indexPath.row]
         cell.groupCellText.text = groups[num].name
-        cell.config(name: groups[num].name,
+        /*cell.config(name: groups[num].name,
                     avatar: (groups[num].avatar ?? UIImage(systemName: "person.3.fill"))!,
-                     description: groups[num].description)
+                     description: groups[num].description)*/
 
         return cell
     }

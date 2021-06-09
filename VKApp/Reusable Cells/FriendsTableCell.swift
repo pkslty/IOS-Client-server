@@ -17,11 +17,13 @@ class FriendsTableCell: UITableViewCell {
     @IBOutlet weak var avatarImage: RoundShadowView!
     
     
-    func config(name: String?, avatar: UIImage?) {
+    func config(name: String?, avatarUrlString: String) {
 
         friendName.text = name
         avatarImage.shadowColor = UIColor.blue.cgColor
-        avatarImage.image = avatar
+        ImageLoader.getImage(from: avatarUrlString) { [weak self] image in
+            self?.avatarImage.image = image
+        }
         
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(avatarTap))
         gestureRecognizer.minimumPressDuration = 0.2

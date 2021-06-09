@@ -14,6 +14,7 @@ class VKRealmUser: Object, Decodable {
     @objc dynamic var lastName = String()
     @objc dynamic var nickName = String()
     @objc dynamic var avatarUrlString = String()
+    var fullName: String {"\(firstName) \(lastName)"}
     
     override static func primaryKey() -> String? {
         "id"
@@ -26,4 +27,16 @@ class VKRealmUser: Object, Decodable {
         case nickName = "nickname"
         case avatarUrlString = "photo_200_orig"
     }
+}
+
+extension VKRealmUser: Comparable {
+    static func < (lhs: VKRealmUser, rhs: VKRealmUser) -> Bool {
+        lhs.lastName < rhs.lastName
+    }
+    
+    static func == (lhs: VKRealmUser, rhs: VKRealmUser) -> Bool {
+        lhs.fullName == rhs.fullName
+    }
+    
+    
 }

@@ -5,7 +5,7 @@
 //  Created by Denis Kuzmin on 24.05.2021.
 //
 
-import Foundation
+import UIKit
 
 class NetworkService {
     private let session = URLSession.shared
@@ -16,6 +16,7 @@ class NetworkService {
         return urlConstructor
         }()
     private let api_version = "5.132"
+    
     
     func getFriends(of userId: Int = Session.Instance.userId, callBack: @escaping ([VKRealmUser]) -> Void) {
         let parameters = [
@@ -76,7 +77,10 @@ class NetworkService {
                 print("JSON Decode fail")
                 return
             }
-            callBack(vkResponse.response.items)
+            DispatchQueue.main.async {
+                callBack(vkResponse.response.items)
+            }
+            //callBack(vkResponse.response.items)
         }
 
     }
@@ -100,11 +104,38 @@ class NetworkService {
             return
             }
             guard let data = data else { return }
-            completionBlock(data)
+            DispatchQueue.main.async {
+                completionBlock(data)
+            }
 
         }
         task.resume()
 
+    }
+    
+    func getData(from url: String, completionBlock: @escaping (Data) -> Void) {
+        guard let url = URL(string: url)
+        else {
+            print("NetworkService error: Invalid url")
+            return
+        }
+        let task = session.dataTask(with: url) { data, response, error in
+            guard error == nil else {
+                print("NetworkService error: \(String(describing: error))")
+            return
+            }
+            guard let data = data
+            else {
+                print("NetworkService error: No data")
+                return
+            }
+            DispatchQueue.main.async {
+                completionBlock(data)
+            }
+            //completionBlock(data)
+
+        }
+        task.resume()
     }
     
 }

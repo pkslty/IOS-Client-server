@@ -8,10 +8,10 @@
 import UIKit
 
 struct Person {
-    var firstname: String
-    var middlename: String = ""
-    var lastname: String
-    var fullname: String {"\(firstname) \(middlename) \(lastname)"}
+    var firstName: String
+    var middleName: String = ""
+    var lastName: String
+    var fullName: String {"\(firstName) \(middleName) \(lastName)"}
     var avatar: UIImage?
     var photos = [(image: UIImage, likes: Int, likers: Set<String>)]()
     var posts = [Post]()
@@ -19,11 +19,11 @@ struct Person {
 
 extension Person: Comparable {
     static func < (lhs: Person, rhs: Person) -> Bool {
-        lhs.lastname < rhs.lastname
+        lhs.lastName < rhs.lastName
     }
     
     static func == (lhs: Person, rhs: Person) -> Bool {
-        lhs.fullname == rhs.fullname
+        lhs.fullName == rhs.fullName
     }
     
     

@@ -14,11 +14,15 @@ class FriendPhotoCell: UICollectionViewCell {
     var photoframe = CGRect.zero
     
     
-    func config(image: UIImage, likes: Int, tag: Int, state: Bool) {
-        likeButton.likes = likes
-        photo.image = image
+    func config(image: VKRealmPhoto, tag: Int) {
+        likeButton.likes = 0
+        //photo.image = image
         likeButton.tag = tag
-        likeButton.isLiked = state
+        likeButton.isLiked = false
+        ImageLoader.getImage(from: image.imageUrlString ?? "none") {[weak self] image in
+            self?.photo.image = image
+        }
+        //print("PHOTO: \(image.image)")
         photoframe = photo.frame
         photo.alpha = 0
         photo.frame = CGRect(x: photo.center.x, y: photo.center.y, width: 0, height: 0)

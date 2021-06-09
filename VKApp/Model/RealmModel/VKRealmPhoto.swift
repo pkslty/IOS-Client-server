@@ -19,6 +19,7 @@ class VKRealmPhoto: Object, Decodable {
     @objc dynamic var userLike: Bool = false
     @objc dynamic var likes: Int = 0
     @objc dynamic var reposts: Int = 0
+    @objc dynamic var imageUrlString: String?
     
     override static func primaryKey() -> String? {
         "id"
@@ -54,6 +55,9 @@ class VKRealmPhoto: Object, Decodable {
         self.ownerId = try values.decode(Int.self, forKey: .ownerId)
         self.hasTags = try values.decode(Bool.self, forKey: .hasTags)
         self.sizes = try values.decode(List<VKRealmPhotoSize>.self, forKey: .sizes)
+        self.imageUrlString = sizes.first { photoSize in
+            photoSize.width > 400
+        }?.urlString
         self.text = try values.decode(String.self, forKey: CodingKeys.text)
         let likes = try values.nestedContainer(keyedBy: LikesCodingKeys.self, forKey: .likes)
         self.userLike = try likes.decode(Int.self, forKey: .userLike) == 1 ? true : false
@@ -78,4 +82,5 @@ class VKRealmPhotoSize: Object, Decodable {
         case width
     }
 }
+
 

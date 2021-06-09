@@ -15,6 +15,6 @@ struct User {
     var fullname: String {"\(firstname) \(middlename) \(lastname)"}
     var login: String
     var password: String
-    var friends = [Person]()
+    var friends = [VKRealmUser]()
     var avatar: UIImage?
 }

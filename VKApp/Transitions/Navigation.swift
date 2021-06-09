@@ -33,7 +33,7 @@ class NavigationController: UINavigationController, UINavigationControllerDelega
            let friend = lastVisibleViewController.friend,
            let friendNum = lastVisibleViewController.friendNum,
            let viewController = viewController as? FriendsViewController {
-            viewController.user?.friends[friendNum].photos = friend.photos
+            //viewController.user?.friends[friendNum].photos = friend.photos
         }
         lastVisibleViewController = visibleViewController
             
