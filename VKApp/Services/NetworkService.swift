@@ -122,6 +122,7 @@ class NetworkService {
         let task = session.dataTask(with: url) { data, response, error in
             guard error == nil else {
                 print("NetworkService error: \(String(describing: error))")
+                print("URL: \(url)")
             return
             }
             guard let data = data

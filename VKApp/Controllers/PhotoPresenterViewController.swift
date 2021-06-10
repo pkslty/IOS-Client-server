@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 
 class PhotoPresenterViewController: UIViewController {
@@ -33,7 +34,7 @@ class PhotoPresenterViewController: UIViewController {
     var transformRight = CATransform3D()
     var transformLeft = CATransform3D()
     
-    var images = [VKRealmPhoto]()
+    var images: Results<VKRealmPhoto>?
     var currentImage: Int = 0
     var rect = CGRect.zero
     var targetFrame = CGRect.zero
@@ -53,7 +54,7 @@ class PhotoPresenterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard images.count > 0 else { return }
+        guard images!.count > 0 else { return }
         
         let panGR = UIPanGestureRecognizer(target: self, action: #selector(panTrack))
         let tapGR = UITapGestureRecognizer(target: self, action: #selector(tapAction))
@@ -70,7 +71,7 @@ class PhotoPresenterViewController: UIViewController {
         view.addGestureRecognizer(tapGR)
         view.addGestureRecognizer(doubleTapGR)
         view.addGestureRecognizer(pinchGR)
-        ImageLoader.getImage(from: images[currentImage].imageUrlString!) { image in
+        ImageLoader.getImage(from: images![currentImage].imageUrlString!) { image in
             let rect = self.calculateRect(image: image!)
             self.mainImageView.image = image!
             self.mainImageView.frame = rect
@@ -188,7 +189,7 @@ class PhotoPresenterViewController: UIViewController {
                         makeLeftAnimator()
                     }
                     x = x > -maxPanDistance ? x : -maxPanDistance
-                    if currentImage == images.count - 1 {
+                    if currentImage == images!.count - 1 {
                         x = x / 2
                     }
                     propertyAnimator?.fractionComplete = x / -maxPanDistance
@@ -246,7 +247,7 @@ class PhotoPresenterViewController: UIViewController {
                     if (propertyAnimator.fractionComplete > 0.5  || //Если больше половины
                             abs(speed) > noReturnSpeed && speed * animatorKind!.rawValue > 0) && //Скорость больше предельной и соответствует направлению аниматора
                         !(currentImage == 0 && x > 0) && //Если не первая картинка и движение вправо
-                        !(currentImage == images.count - 1 && x < 0) //Если не последняя картинка и движение влево
+                        !(currentImage == images!.count - 1 && x < 0) //Если не последняя картинка и движение влево
                     {
                         let direction = x < 0 ? 1 : -1
                         propertyAnimator.addCompletion { [self] _ in
@@ -282,8 +283,8 @@ class PhotoPresenterViewController: UIViewController {
         secondImageView.bounds = rect
         secondImageView.contentMode = .scaleAspectFit
         secondImageView.clipsToBounds = true
-        if currentImage <= images.count - 2 {
-            ImageLoader.getImage(from: images[currentImage + 1].imageUrlString!) { image in
+        if currentImage <= images!.count - 2 {
+            ImageLoader.getImage(from: images![currentImage + 1].imageUrlString!) { image in
                 self.secondImageView.image = image!
                 self.secondImageView.frame = self.calculateRect(image: image!)
                 self.secondImageView.bounds = self.calculateRect(image: image!)
@@ -322,7 +323,7 @@ class PhotoPresenterViewController: UIViewController {
         //Если это первая картинка, то secondImageView будет пустой
         //Нельзя допусть завершение аниматора с currentImage == 0
         if currentImage > 0 {
-            ImageLoader.getImage(from: images[currentImage - 1].imageUrlString!) { image in
+            ImageLoader.getImage(from: images![currentImage - 1].imageUrlString!) { image in
                 self.secondImageView.image = image!
                 self.secondImageView.frame = self.calculateRect(image: image!)
                 self.secondImageView.bounds = self.calculateRect(image: image!)
