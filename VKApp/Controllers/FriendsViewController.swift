@@ -16,12 +16,13 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var categoriesPicker: CategoriesPicker!
     
     var user: User? = User(username: "Denis", firstname: "Denis", login: "1", password: "1")
+    let updateIndicator = UIActivityIndicatorView()
     
     
     var categories = [String]()
-    //var vkFriendsResults: Results<VKRealmUser>?
     var sortedFriends = [VKRealmUser]()
     var vkFriends:  Results<VKRealmUser>?
+    var token: NotificationToken?
     
     struct Section {
         var sectionName: Character
@@ -34,7 +35,35 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let x = view.frame.midX
+        let y = navigationController?.navigationBar.frame.maxY ?? view.frame.minY
+        let rect = CGRect(x: x-25, y: y, width: 50, height: 50)
+        updateIndicator.frame = rect
+        updateIndicator.color = .red
+        view.addSubview(updateIndicator)
+        
         getFriends()
+        token = vkFriends?.observe({ changes in
+            switch changes {
+            case .initial(let friends):
+                print(friends)
+            case .update(let friends, let deletions, let insertions, let modifications):
+                print(friends, deletions, insertions, modifications)
+                var pathsToUpdate = [IndexPath]()
+                guard let indexPathsForVisibleRows = self.friendTable.indexPathsForVisibleRows else { return }
+                for indexPath in indexPathsForVisibleRows {
+                    for modification in modifications {
+                        let num = self.sections[indexPath.section].rows[indexPath.row]
+                        if self.vkFriends![modification] == self.sortedFriends[num] {
+                            pathsToUpdate.append(indexPath)
+                        }
+                    }
+                }
+                self.friendTable.reloadRows(at: pathsToUpdate, with: .left)
+            case .error(let error):
+                print(error)
+            }
+        })
         
         categoriesPicker.addTarget(self, action: #selector(categoriesPickerValueChanged(_:)),
                               for: .valueChanged)
@@ -144,6 +173,16 @@ extension FriendsViewController: UITableViewDataSource {
             self?.prepareSections()
             self?.friendTable.reloadData()
         }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        print(scrollView.contentOffset)
+        guard scrollView.contentOffset.y >= 0 else { return }
+        updateIndicator.hidesWhenStopped = false
+        if scrollView.contentOffset.y < 50 {
+            updateIndicator.startAnimating()
+        }
+        
     }
     
 }
