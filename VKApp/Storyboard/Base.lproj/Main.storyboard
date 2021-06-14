@@ -206,7 +206,6 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="avatarImage" destination="YMJ-dm-VbI" id="Jhd-ol-PjK"/>
-                                            <outlet property="avatarSize" destination="D63-yC-KxT" id="5MP-cS-rAx"/>
                                             <outlet property="friendName" destination="jyD-oW-Bfo" id="ffw-6X-7tw"/>
                                             <segue destination="dkt-kg-Of1" kind="show" identifier="showFriendPhotos" id="i8D-5i-qFz"/>
                                         </connections>

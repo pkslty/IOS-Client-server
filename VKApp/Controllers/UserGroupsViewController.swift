@@ -11,6 +11,12 @@ import RealmSwift
 class UserGroupsViewController: UITableViewController {
 
     var groups: Results<VKRealmGroup>?
+    enum UpdateRowsMethod {
+        case update
+        case delete
+        case insert
+    }
+    var token: NotificationToken?
     
     @IBAction func addGroup(segue: UIStoryboardSegue) {
         
@@ -31,14 +37,42 @@ class UserGroupsViewController: UITableViewController {
         super.viewDidLoad()
         
         getGroups()
+        
+        token = groups?.observe({ changes in
+            switch changes {
+            case .initial:
+                self.tableView.reloadData()
+            case .update(_, let deletions, let insertions, let modifications):
+                self.updateRows(for: modifications, method: .update)
+                self.updateRows(for: deletions, method: .delete)
+                self.updateRows(for: insertions, method: .insert)
+            case .error(let error):
+                print(error)
+            }
+        })
 
 
+    }
+    
+    private func updateRows(for vkPhotosModificatedIndexes: [Int], method: UpdateRowsMethod) {
+        var pathsToUpdate = [IndexPath]()
+        vkPhotosModificatedIndexes.forEach { index in
+            pathsToUpdate.append(IndexPath(row: index, section: 0))
+        }
+        guard pathsToUpdate.count > 0 else { return }
+        switch method {
+        case .update:
+            tableView.reloadRows(at: pathsToUpdate, with: .automatic)
+        case .delete:
+        tableView.deleteRows(at: pathsToUpdate, with: .automatic)
+        case .insert:
+            tableView.insertRows(at: pathsToUpdate, with: .automatic)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateGroups()
-        tableView.reloadData()
     }
 
     // MARK: - Table view data source
@@ -88,7 +122,6 @@ class UserGroupsViewController: UITableViewController {
         let ns = NetworkService()
         ns.getGroups { [weak self] groups in
             try? RealmService.save(items: groups)
-            self?.tableView.reloadData()
         }
     }
     

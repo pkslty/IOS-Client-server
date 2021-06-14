@@ -15,12 +15,17 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var friendTable: UITableView!
     @IBOutlet weak var categoriesPicker: CategoriesPicker!
     
+    enum UpdateRowsMethod {
+        case update
+        case delete
+        case insert
+    }
+    
     var user: User? = User(username: "Denis", firstname: "Denis", login: "1", password: "1")
     let updateIndicator = UIActivityIndicatorView()
     
     
     var categories = [String]()
-    var sortedFriends = [VKRealmUser]()
     var vkFriends:  Results<VKRealmUser>?
     var token: NotificationToken?
     
@@ -45,21 +50,13 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
         getFriends()
         token = vkFriends?.observe({ changes in
             switch changes {
-            case .initial(let friends):
-                print(friends)
-            case .update(let friends, let deletions, let insertions, let modifications):
-                print(friends, deletions, insertions, modifications)
-                var pathsToUpdate = [IndexPath]()
-                guard let indexPathsForVisibleRows = self.friendTable.indexPathsForVisibleRows else { return }
-                for indexPath in indexPathsForVisibleRows {
-                    for modification in modifications {
-                        let num = self.sections[indexPath.section].rows[indexPath.row]
-                        if self.vkFriends![modification] == self.sortedFriends[num] {
-                            pathsToUpdate.append(indexPath)
-                        }
-                    }
-                }
-                self.friendTable.reloadRows(at: pathsToUpdate, with: .left)
+            case .initial:
+                self.prepareSections()
+                self.friendTable.reloadData()
+            case .update( _, let deletions, let insertions, let modifications):
+                self.updateRows(for: modifications, method: .update)
+                self.updateRows(for: deletions, method: .delete)
+                self.updateRows(for: insertions, method: .insert)
             case .error(let error):
                 print(error)
             }
@@ -82,13 +79,10 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
         super.prepare(for: segue, sender: sender)
         if segue.identifier == "showFriendPhotos" {
             guard let destinationVC = segue.destination as? FriendPhotosViewController else { return }
-            /*destinationVC.friendNum = sections[friendTable.indexPathForSelectedRow!.section].rows[friendTable.indexPathForSelectedRow!.row]
-            destinationVC.friend = sortedFriends[destinationVC.friendNum!]
-            destinationVC.username = user?.username*/
             let section = friendTable.indexPathForSelectedRow!.section
             let row = friendTable.indexPathForSelectedRow!.row
             let friendNum = sections[section].rows[row]
-            let friendId = sortedFriends[friendNum].id
+            let friendId = vkFriends![friendNum].id
             destinationVC.friendId = friendId
         }
     }
@@ -99,12 +93,13 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
     }
     
     private func prepareSections() {
-        sortedFriends = vkFriends!.sorted(by: <)
+        guard let vkFriends = vkFriends else { return }
+        categoriesPicker.categories.removeAll()
         sections = [Section]()
         
-        for i in 0 ..< sortedFriends.count {
-            let ch = Character(sortedFriends[i].lastName.first!.uppercased()).isLetter ?
-                Character(sortedFriends[i].lastName.first!.uppercased()) : "#"
+        for i in 0 ..< vkFriends.count {
+            let ch = Character(vkFriends[i].lastName.first!.uppercased()).isLetter ?
+                Character(vkFriends[i].lastName.first!.uppercased()) : "#"
             
             if let num = sections.firstIndex(where: {friendsection in friendsection.sectionName == ch}) {
                 sections[num].rows.append(i)
@@ -113,7 +108,49 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
                 categoriesPicker.categories.append(String(ch))
             }
         }
+        sections.sort(by: {$0.sectionName < $1.sectionName})
+        categoriesPicker.categories.sort(by: <)
     }
+    
+    private func getFriends() {
+
+        vkFriends = try? RealmService.load(typeOf: VKRealmUser.self)
+        //prepareSections()
+        //friendTable.reloadData()
+
+    }
+    
+    private func updateFriends() {
+        let networkService = NetworkService()
+        networkService.getFriends { [weak self] friends in
+            try? RealmService.save(items: friends)
+            //self?.prepareSections()
+            //self?.friendTable.reloadData()
+        }
+    }
+    
+    private func updateRows(for vkFriendModificatedIndexes: [Int], method: UpdateRowsMethod) {
+        guard let indexPathsForVisibleRows = friendTable.indexPathsForVisibleRows
+        else { return }
+        var pathsToUpdate = [IndexPath]()
+        for indexPath in indexPathsForVisibleRows {
+            for index in vkFriendModificatedIndexes {
+                if index == sections[indexPath.section].rows[indexPath.row] {
+                    pathsToUpdate.append(indexPath)
+                    break
+                }
+            }
+        }
+        guard pathsToUpdate.count > 0 else { return }
+        switch method {
+        case .update:
+            friendTable.reloadRows(at: pathsToUpdate, with: .automatic)
+        case .delete, .insert:
+            prepareSections()
+            friendTable.reloadData()
+        }
+    }
+    
     
 }
 
@@ -138,8 +175,8 @@ extension FriendsViewController: UITableViewDataSource {
         else { return UITableViewCell()}
         
         let num = sections[indexPath.section].rows[indexPath.row]
-        cell.config(name: sortedFriends[num].fullName,
-                    avatarUrlString: sortedFriends[num].avatarUrlString)
+        cell.config(name: vkFriends![num].fullName,
+                    avatarUrlString: vkFriends![num].avatarUrlString)
 
         return cell
     }
@@ -157,25 +194,8 @@ extension FriendsViewController: UITableViewDataSource {
     }
     
     
-
-    private func getFriends() {
-
-        vkFriends = try? RealmService.load(typeOf: VKRealmUser.self)
-        prepareSections()
-        friendTable.reloadData()
-
-    }
     
-    private func updateFriends() {
-        let networkService = NetworkService()
-        networkService.getFriends { [weak self] friends in
-            try? RealmService.save(items: friends)
-            self?.prepareSections()
-            self?.friendTable.reloadData()
-        }
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    /*func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print(scrollView.contentOffset)
         guard scrollView.contentOffset.y >= 0 else { return }
         updateIndicator.hidesWhenStopped = false
@@ -183,95 +203,7 @@ extension FriendsViewController: UITableViewDataSource {
             updateIndicator.startAnimating()
         }
         
-    }
+    }*/
     
 }
-        /*
-        user.friends.append(VKRealmUser(firstName: "Вадим", lastName: "Рощин",
-                                   avatar: UIImage(named: "thumb-1")))
-       
-        user.friends.append(Person(firstName: "Илья", lastName: "Шумихин",
-                                   avatar: UIImage(named: "thumb-2")))
         
-        user.friends.append(Person(firstName: "Александр", lastName: "Ковалев",
-                                   avatar: UIImage(named: "thumb-3")))
-
-        user.friends.append(Person(firstName: "Георгий", lastName: "Сабанов",
-                                   avatar: UIImage(named: "thumb-4")))
-
-        user.friends.append(Person(firstName: "Николай", lastName: "Родионов",
-                                   avatar: UIImage(named: "thumb-5")))
-
-        user.friends.append(Person(firstName: "Александр", lastName: "Федоров",
-                                   avatar: UIImage(named: "thumb-6")))
-
-        user.friends.append(Person(firstName: "Андрей", lastName: "Антропов",
-                                   avatar: UIImage(named: "thumb-7")))
-        
-        user.friends.append(Person(firstName: "Евгений", lastName: "Елчев",
-                                   avatar: UIImage(named: "thumb-8")))
-        user.friends.append(Person(firstName: "Владислав", lastName: "Фролов",
-                                   avatar: UIImage(named: "thumb-9")))
-        user.friends.append(Person(firstName: "Максим", lastName: "Пригоженков",
-                                   avatar: UIImage(named: "thumb-10")))
-        user.friends.append(Person(firstName: "Никита", lastName: "Филонов",
-                                   avatar: UIImage(named: "thumb-11")))
-        user.friends.append(Person(firstName: "Олег", lastName: "Иванов"))
-        user.friends.append(Person(firstName: "Алексей", lastName: "Усанов",
-                                   avatar: UIImage(named: "thumb-13")))
-        user.friends.append(Person(firstName: "Станислав", lastName: "Иванов",
-                                   avatar: UIImage(named: "thumb-14")))
-        user.friends.append(Person(firstName: "Алёна", lastName: "Козлова",
-                                   avatar: UIImage(named: "thumb-15")))
-        user.friends.append(Person(firstName: "Кирилл", lastName: "Лукьянов",
-                                   avatar: UIImage(named: "thumb-16")))
-        user.friends.append(Person(firstName: "Анатолий", lastName: "Пешков",
-                                   avatar: UIImage(named: "thumb-17")))
-        user.friends.append(Person(firstName: "Леонид", lastName: "Нифантьев"))
-        //user.friends.append(Person(firstname: "A", lastname: "A"))
-        //user.friends.append(Person(firstname: "B", lastname: "B"))
-        //user.friends.append(Person(firstname: "C", lastname: "C"))
-        
-        user.friends.append(Person(firstName: "Вячеслав", lastName: "Кирица",
-                                   avatar: UIImage(named: "thumb-19")))
-        user.friends.append(Person(firstName: "Алексей", lastName: "Кудрявцев",
-                                   avatar: UIImage(named: "thumb-20")))
-        user.friends.append(Person(firstName: "Юрий", lastName: "Султанов",
-                                   avatar: UIImage(named: "thumb-21")))
-        user.friends.append(Person(firstName: "Егор", lastName: "Петров",
-                                   avatar: UIImage(named: "thumb-22")))
-        //user.friends.append(Person(firstname: "Родион", lastname: "Молчанов"))
-        user.friends.append(Person(firstName: "Станислав", middleName: "Дмитриевич", lastName: "Белых",
-                                   avatar: UIImage(named: "thumb-24")))
-        user.friends.append(Person(firstName: "Антон", lastName: "Марченко",
-                                   avatar: UIImage(named: "thumb-25")))
-        
-                                   
-        user.friends[0].photos.append((UIImage(named: "man01")!, 0, Set<String>()))
-        user.friends[0].photos[0].likes = 87
-        user.friends[0].photos[0].likers.insert("admin")
-        user.friends[1].photos.append((UIImage(named: "man02")!, 0, Set<String>()))
-        
-        user.friends[2].photos.append((UIImage(named: "man03")!, 0, Set<String>()))
-        user.friends[3].photos.append((UIImage(named: "woman01")!, 0, Set<String>()))
-        user.friends[4].photos.append((UIImage(named: "woman02")!, 0, Set<String>()))
-        user.friends[5].photos.append((UIImage(named: "man04")!, 0, Set<String>()))
-        user.friends[6].photos.append((UIImage(named: "man05")!, 0, Set<String>()))
-        
-        user.friends[1].photos.append((UIImage(named: "man01")!, 0, Set<String>()))
-        user.friends[1].photos.append((UIImage(named: "man03")!, 0, Set<String>()))
-        user.friends[1].photos.append((UIImage(named: "woman01")!, 0, Set<String>()))
-        user.friends[1].photos.append((UIImage(named: "woman02")!, 0, Set<String>()))
-        user.friends[1].photos.append((UIImage(named: "man04")!, 0, Set<String>()))
-        user.friends[1].photos.append((UIImage(named: "man05")!, 0, Set<String>()))
-        user.friends[6].photos.append((UIImage(named: "man01")!, 0, Set<String>()))
-        user.friends[6].photos.append((UIImage(named: "man03")!, 0, Set<String>()))
-        user.friends[6].photos.append((UIImage(named: "woman01")!, 0, Set<String>()))
-        user.friends[6].photos.append((UIImage(named: "woman02")!, 0, Set<String>()))
-        user.friends[6].photos.append((UIImage(named: "man04")!, 0, Set<String>()))
-        user.friends[6].photos.append((UIImage(named: "man02")!, 0, Set<String>()))
-        user.friends[6].photos.append((UIImage(named: "woman03")!, 0, Set<String>()))
-        user.friends[6].photos.append((UIImage(named: "group01")!, 0, Set<String>()))
-        user.friends[6].photos.append((UIImage(named: "woman04")!, 0, Set<String>()))*/
-
-

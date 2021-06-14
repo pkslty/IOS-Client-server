@@ -10,6 +10,12 @@ import RealmSwift
 
 class FriendPhotosViewController: UICollectionViewController {
 
+    enum UpdateRowsMethod {
+        case update
+        case delete
+        case insert
+    }
+    
     var friend: VKRealmUser?
     var photos: Results<VKRealmPhoto>? {
         didSet {
@@ -21,6 +27,7 @@ class FriendPhotosViewController: UICollectionViewController {
     var username: String?
     let animator = PushAnimation()
     var currentImage = 0
+    var token: NotificationToken?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +37,36 @@ class FriendPhotosViewController: UICollectionViewController {
         //navigationController?.delegate = self
         
         getPhotos()
+        
+        token = photos?.observe({ changes in
+            switch changes {
+            case .initial:
+                self.collectionView.reloadData()
+            case .update(_, let deletions, let insertions, let modifications):
+                self.updateRows(for: modifications, method: .update)
+                self.updateRows(for: deletions, method: .delete)
+                self.updateRows(for: insertions, method: .insert)
+            case .error(let error):
+                print(error)
+            }
+        })
 
+    }
+    
+    private func updateRows(for vkPhotosModificatedIndexes: [Int], method: UpdateRowsMethod) {
+        var pathsToUpdate = [IndexPath]()
+        vkPhotosModificatedIndexes.forEach { index in
+            pathsToUpdate.append(IndexPath(row: index, section: 0))
+        }
+        guard pathsToUpdate.count > 0 else { return }
+        switch method {
+        case .update:
+            collectionView.reloadItems(at: pathsToUpdate)
+        case .delete:
+            collectionView.deleteItems(at: pathsToUpdate)
+        case .insert:
+            collectionView.insertItems(at: pathsToUpdate)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -109,9 +145,11 @@ class FriendPhotosViewController: UICollectionViewController {
         ns.getPhotos(of: friendId) { [weak self] photos in
             print(photos)
             try? RealmService.save(items: photos)
-            self?.collectionView.reloadData()
+            //self?.collectionView.reloadData()
         }
     }
+
+    
     
 }
 

@@ -9,7 +9,7 @@ import UIKit
 
 class FriendsTableCell: UITableViewCell {
 
-    @IBOutlet weak var avatarSize: NSLayoutConstraint!
+    //@IBOutlet weak var avatarSize: NSLayoutConstraint!
     
     @IBOutlet weak var friendName: UILabel!
     
@@ -34,6 +34,7 @@ class FriendsTableCell: UITableViewCell {
         super.prepareForReuse()
 
         avatarImage.image = UIImage(systemName: "person")
+        friendName.text = String()
     }
     
     @objc func avatarTap(sender: UILongPressGestureRecognizer) {
