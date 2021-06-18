@@ -107,6 +107,10 @@ class NetworkService {
             DispatchQueue.main.async {
                 completionBlock(data)
             }
+            //let queue = DispatchQueue.global()
+            /*queue.async {
+                completionBlock(data)
+            }*/
 
         }
         task.resume()
@@ -130,9 +134,13 @@ class NetworkService {
                 print("NetworkService error: No data")
                 return
             }
-            DispatchQueue.main.async {
+            let queue = DispatchQueue.global()
+            queue.async {
                 completionBlock(data)
             }
+            /*DispatchQueue.main.async {
+                completionBlock(data)
+            }*/
             //completionBlock(data)
 
         }

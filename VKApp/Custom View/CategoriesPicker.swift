@@ -112,6 +112,7 @@ import UIKit
         if isAdaptive {
             buttons.append(makeButton(title: "\u{2022}", tag: Int(step / 2)))
         }
+        if maxSymbols > 1 {
         for i in 1 ..< maxSymbols - 1 {
             let tag = i * step
             let title = categories[tag]
@@ -119,6 +120,7 @@ import UIKit
             if isAdaptive {
                 buttons.append(makeButton(title: "\u{2022}", tag: tag + Int(step / 2)))
             }
+        }
         }
         buttons.append(makeButton(title: categories.last!, tag: categories.count - 1))
         stackView = UIStackView(arrangedSubviews: buttons)

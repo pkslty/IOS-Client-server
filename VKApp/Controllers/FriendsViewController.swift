@@ -40,12 +40,6 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let x = view.frame.midX
-        let y = navigationController?.navigationBar.frame.maxY ?? view.frame.minY
-        let rect = CGRect(x: x-25, y: y, width: 50, height: 50)
-        updateIndicator.frame = rect
-        updateIndicator.color = .red
-        view.addSubview(updateIndicator)
         
         getFriends()
         token = vkFriends?.observe({ changes in
@@ -65,6 +59,14 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
         categoriesPicker.addTarget(self, action: #selector(categoriesPickerValueChanged(_:)),
                               for: .valueChanged)
         friendTable.register(FriendsTableCellHeader.self, forHeaderFooterViewReuseIdentifier: "FriendsTableCellHeader")
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshTable), for: .valueChanged)
+        friendTable.refreshControl = refreshControl
+    }
+    
+    @objc func refreshTable() {
+        updateFriends()
+        
     }
     
     @objc func categoriesPickerValueChanged(_ categoriesPicker: CategoriesPicker) {
@@ -123,7 +125,14 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
     private func updateFriends() {
         let networkService = NetworkService()
         networkService.getFriends { [weak self] friends in
-            try? RealmService.save(items: friends)
+            do {
+                try RealmService.save(items: friends)
+            } catch let error {
+                print(error.localizedDescription)
+            }
+            DispatchQueue.main.async {
+                self?.friendTable.refreshControl?.endRefreshing()
+            }
             //self?.prepareSections()
             //self?.friendTable.reloadData()
         }
@@ -131,7 +140,9 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
     
     private func updateRows(for vkFriendModificatedIndexes: [Int], method: UpdateRowsMethod) {
         guard let indexPathsForVisibleRows = friendTable.indexPathsForVisibleRows
-        else { return }
+        else {
+            
+            return }
         var pathsToUpdate = [IndexPath]()
         for indexPath in indexPathsForVisibleRows {
             for index in vkFriendModificatedIndexes {
@@ -141,9 +152,9 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
                 }
             }
         }
-        guard pathsToUpdate.count > 0 else { return }
         switch method {
         case .update:
+            if pathsToUpdate.count == 0 { break }
             friendTable.reloadRows(at: pathsToUpdate, with: .automatic)
         case .delete, .insert:
             prepareSections()
@@ -195,15 +206,6 @@ extension FriendsViewController: UITableViewDataSource {
     
     
     
-    /*func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print(scrollView.contentOffset)
-        guard scrollView.contentOffset.y >= 0 else { return }
-        updateIndicator.hidesWhenStopped = false
-        if scrollView.contentOffset.y < 50 {
-            updateIndicator.startAnimating()
-        }
-        
-    }*/
     
 }
         

@@ -19,6 +19,7 @@ class RealmService {
             realm.add(items,
                       update: update)
         }
+
     }
     
     static func load<T:Object>(typeOf: T.Type) throws -> Results<T> {
