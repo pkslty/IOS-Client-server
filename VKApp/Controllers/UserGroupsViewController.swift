@@ -21,7 +21,7 @@ class UserGroupsViewController: UITableViewController {
     @IBAction func addGroup(segue: UIStoryboardSegue) {
         
         if let viewController = segue.source as? AllGroupsViewController {
-            let allgroups = viewController.searchedGroups
+            let allgroups = viewController.foundedGroups
             let row = viewController.groupsTable.indexPathForSelectedRow?.row
 
             self.tableView.reloadData()

@@ -18,7 +18,7 @@ class AllGroupsViewController: UIViewController, UITableViewDelegate {
     
     @IBOutlet weak var groupsTable: UITableView!
     
-    var searchedGroups = [VKRealmGroup]()
+    var foundedGroups = [VKRealmGroup]()
     private let firestore = Firestore.firestore()
     
     override func viewDidLoad() {
@@ -94,7 +94,7 @@ extension AllGroupsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     
-        return searchedGroups.count
+        return foundedGroups.count
     }
 
 
@@ -102,9 +102,9 @@ extension AllGroupsViewController: UITableViewDataSource {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "GroupCell", for: indexPath) as? GroupCell
         else { return UITableViewCell() }
-        cell.config(name: searchedGroups[indexPath.row].name,
-                    avatarUrlString: searchedGroups[indexPath.row].photo200UrlString,
-                    description: searchedGroups[indexPath.row].screenName)
+        cell.config(name: foundedGroups[indexPath.row].name,
+                    avatarUrlString: foundedGroups[indexPath.row].photo200UrlString,
+                    description: foundedGroups[indexPath.row].screenName)
 
         return cell
     }
@@ -118,7 +118,7 @@ extension AllGroupsViewController: UISearchBarDelegate {
         guard let searchText = searchBar.text else { return }
         let ns = NetworkService()
         ns.searchGroups(by: searchText, resultsCount: 100) { [weak self] groups in
-            self?.searchedGroups = groups
+            self?.foundedGroups = groups
             self?.groupsTable.reloadData()
         }
         
@@ -141,7 +141,7 @@ extension AllGroupsViewController: UISearchBarDelegate {
                                     print("Error saving database: \(error.localizedDescription)")
                                 }
                                 else {
-                                    print("Succesfully save search resault to Firestore")
+                                    print("Succesfully save search result to Firestore")
                                 }
                             }
             }
