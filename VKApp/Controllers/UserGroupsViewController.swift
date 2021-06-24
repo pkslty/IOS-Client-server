@@ -21,15 +21,10 @@ class UserGroupsViewController: UITableViewController {
     @IBAction func addGroup(segue: UIStoryboardSegue) {
         
         if let viewController = segue.source as? AllGroupsViewController {
-            if let allgroups = viewController.groups,
-               let section = viewController.groupsTable.indexPathForSelectedRow?.section,
-               let row = viewController.groupsTable.indexPathForSelectedRow?.row {
-                    let num = viewController.sections[section].rows[row]
-                    //if !groups.contains(allgroups[num]) {
-                    //    groups.append(allgroups[num])
-                    //}
-                    self.tableView.reloadData()
-            }
+            let allgroups = viewController.searchedGroups
+            let row = viewController.groupsTable.indexPathForSelectedRow?.row
+
+            self.tableView.reloadData()
         }
     }
     
