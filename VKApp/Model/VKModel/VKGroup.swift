@@ -16,9 +16,9 @@ struct VKGroup: Decodable {
     let isAdmin: Int
     let isMember: Int
     let isAdvertiser: Int
-    let photo50UrlString: String
-    let photo100UrlString: String
-    let photo200UrlString: String
+    let photo50UrlString: String?
+    let photo100UrlString: String?
+    let photo200UrlString: String?
     
     enum CodingKeys: String, CodingKey {
         case id

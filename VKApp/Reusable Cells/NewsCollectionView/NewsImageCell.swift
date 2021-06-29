@@ -14,8 +14,10 @@ class NewsImageCell: UICollectionViewCell {
     
     @IBOutlet weak var plus: UILabel!
     
-    func configure(image: UIImage, plus: Int?) {
-        self.image.image = image
+    func configure(imageUrlString: String, plus: Int?) {
+        ImageLoader.getImage(from: imageUrlString) { [weak self] image in
+            self?.image.image = image
+        }
         self.plus.isHidden = true
         guard let plus = plus, plus > 0 else { return}
         self.plus.isHidden = false

@@ -18,7 +18,7 @@ class NetworkService {
     private let api_version = "5.132"
     
     
-    func getFriends(of userId: Int = Session.Instance.userId, callBack: @escaping ([VKRealmUser]) -> Void) {
+    func getFriends(of userId: Int = Session.Instance.userId, completionBlock: @escaping ([VKRealmUser]) -> Void) {
         let parameters = [
             "order" : "hints",
             "fields" : "nickname,photo_200_orig",
@@ -30,7 +30,47 @@ class NetworkService {
                 print("JSON Decode fail")
                 return
             }
-            callBack(vkResponse.response.items)
+            completionBlock(vkResponse.response.items)
+        }
+    }
+    
+    func getUserById(id: Int, completionBlock: @escaping ([VKUser]) -> Void) {
+        let parameters = [
+            "user_ids" : String(id),
+            "fields" : "photo_200_orig",
+        ]
+        request(method: "users.get", parameters: parameters) { data in
+            do {
+                let vkResponse = try JSONDecoder().decode(VKResponse<[VKUser]>.self, from: data)
+                completionBlock(vkResponse.response)
+            }
+            catch let error {
+                print("JSON error: \(error)")
+                return
+            }
+        }
+    }
+    
+    func getGroupById(id: Int, completionBlock: @escaping ([VKGroup]) -> Void) {
+        let parameters = [
+            "group_ids" : String(id),
+            "fields" : "photo_200",
+        ]
+        request(method: "groups.getById", parameters: parameters) { data in
+            do {
+                let vkResponse = try JSONDecoder().decode(VKResponse<[VKGroup]>.self, from: data)
+                completionBlock(vkResponse.response)
+            }
+            catch let error {
+                print("JSON error: \(error)")
+                return
+            }
+        }
+    }
+    
+    func performVkMethod(method: String, with parameters: [String: String], token: String = Session.Instance.token, completionBlock: @escaping (Data) -> Void) {
+        request(method: method, parameters: parameters, token: token) { data in
+            completionBlock(data)
         }
     }
     
@@ -50,7 +90,7 @@ class NetworkService {
         }
     }
     
-    func searchGroups(by query: String, resultsCount: Int, callBack: @escaping ([VKRealmGroup]) -> Void) {
+    func searchGroups(by query: String, resultsCount: Int, completionBlock: @escaping ([VKRealmGroup]) -> Void) {
         let parameters = [
             "q" : query,
             "count" : String(resultsCount),
@@ -61,12 +101,12 @@ class NetworkService {
                 print("JSON Decode fail")
                 return
             }
-            callBack(vkResponse.response.items)
+            completionBlock(vkResponse.response.items)
         }
 
     }
     
-    func getPhotos(of userId: Int, callBack: @escaping ([VKRealmPhoto]) -> Void) {
+    func getPhotos(of userId: Int, completionBlock: @escaping ([VKRealmPhoto]) -> Void) {
         let parameters = [
             "owner_id" : String(userId),
             "extended" : "1",
@@ -78,17 +118,17 @@ class NetworkService {
                 return
             }
             DispatchQueue.main.async {
-                callBack(vkResponse.response.items)
+                completionBlock(vkResponse.response.items)
             }
             //callBack(vkResponse.response.items)
         }
 
     }
     
-    private func request(method: String, parameters: [String: String], completionBlock: @escaping (Data) -> Void) {
+    private func request(method: String, parameters: [String: String], token: String = Session.Instance.token, completionBlock: @escaping (Data) -> Void) {
         url.path = "/method/" + method
         url.queryItems = [
-            URLQueryItem(name: "access_token", value: Session.Instance.token),
+            URLQueryItem(name: "access_token", value: token),
             URLQueryItem(name: "v", value: api_version)]
         for (parameter, value) in parameters {
             url.queryItems?.append(

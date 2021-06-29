@@ -35,36 +35,38 @@ class NewsCollectionViewLayout: UICollectionViewLayout {
             
             let cellWidth = collectionView.frame.width
             let imageCellHeight = cellWidth
-            var firstImageInRow = true
+            //var firstImageInRow = true
             //var lastY = CGFloat.zero
             for index in 0 ..< itemsCount {
                 let indexPath = IndexPath(item: index, section: section)
                 let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
-                switch index {
-                //Author name and date
-                case 0:
-                    attributes.frame = CGRect(x: 0, y: lastY, width: cellWidth, height: authorCellHeight)
-                    lastY += authorCellHeight
+                let cellDescription = newsController.cellsDataDesriptions[section]?[index]
+                switch cellDescription?.type {
+                case .author:
+                    attributes.frame = CGRect(x: 0, y: lastY+5, width: cellWidth, height: authorCellHeight)
+                    lastY += authorCellHeight+5
                     
                 //Last cell with likes, repost, etc
-                case let count where count == itemsCount - 1:
-                    attributes.frame = CGRect(x: 0, y: lastY, width: cellWidth, height: actionsCellHeight)
-                    lastY += actionsCellHeight
+                case .actions:
+                    attributes.frame = CGRect(x: 0, y: lastY+5, width: cellWidth, height: actionsCellHeight)
+                    lastY += actionsCellHeight+5
                     
                 //Cell with the text if the text exists
-                case 1 where newsController.posts[section].text != nil:
-                    let cellHeightThatFits = UILabel.estimatedSize(newsController.posts[section].text!, targetSize: CGSize(width: cellWidth, height: .zero)).height
+                case .text where newsController.vkNews[section].text != nil:
+                    let cellHeightThatFits = UILabel.estimatedSize(newsController.vkNews[section].text!, targetSize: CGSize(width: cellWidth, height: .zero)).height
                     //newsController.textCellHeightsThatFits[section] = cellHeightThatFits
                     var cellHeight = textCellHeight
-                    if !newsController.posts[section].isTextFolded || textCellHeight > cellHeightThatFits {
-                        cellHeight = cellHeightThatFits
+                    if !newsController.vkNews[section].isTextFolded || textCellHeight > cellHeightThatFits {
+                        cellHeight = cellHeightThatFits+5
                     }
-                    attributes.frame = CGRect(x: 0, y: lastY, width: cellWidth, height: cellHeight)
-                    lastY += cellHeight
+                    attributes.frame = CGRect(x: 0, y: lastY+5, width: cellWidth, height: cellHeight)
+                    lastY += cellHeight+5
                     
-                //All other cells with images
+                case .photo, .attachmentPhoto:
+                    attributes.frame = CGRect(x: 0, y: lastY+5, width: cellWidth, height: imageCellHeight)
+                    lastY += imageCellHeight+5
                 default:
-                    if newsController.posts[section].isImagesFolded {
+                    /*if newsController.posts[section].isImagesFolded {
                         switch newsController.posts[section].images.count {
                         case 1:
                             attributes.frame = CGRect(x: 0, y: lastY, width: cellWidth, height: imageCellHeight)
@@ -85,7 +87,8 @@ class NewsCollectionViewLayout: UICollectionViewLayout {
                     } else {
                         attributes.frame = CGRect(x: 0, y: lastY, width: cellWidth, height: imageCellHeight)
                         lastY += imageCellHeight
-                    }
+                    }*/
+                    print("whatever")
                 }
                 totalCellsHeight = lastY
                 cacheAttributes[indexPath] = attributes

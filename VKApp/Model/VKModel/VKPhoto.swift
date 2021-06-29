@@ -8,11 +8,22 @@
 import Foundation
 struct VKPhoto: Decodable {
     let albumId: Int
-    let date: Int
+    let date: Double
     let id: Int
     let ownerId: Int
     let hasTags: Bool
+    let accessKey: String?
+    let postId: Int?
     let sizes: [VKPhotoSize]
+    let text: String
+    let userId: Int
+    let likes: VKLikes?
+    let reposts: VKReposts?
+    let comments: VKComments?
+    let canComment: Bool?
+    let canRepost: Bool?
+    let imageUrlString: String?
+    
 
     
     
@@ -22,7 +33,38 @@ struct VKPhoto: Decodable {
         case id
         case ownerId = "owner_id"
         case hasTags = "has_tags"
+        case accessKey = "access_key"
+        case postId = "post_id"
         case sizes
+        case text
+        case userId = "user_id"
+        case likes
+        case reposts
+        case comments
+        case canComment = "can_comment"
+        case canRepost = "can_repost"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.albumId = try values.decode(Int.self, forKey: .albumId)
+        self.date = try values.decode(Double.self, forKey: .date)
+        self.id = try values.decode(Int.self, forKey: .id)
+        self.ownerId = try values.decode(Int.self, forKey: .ownerId)
+        self.hasTags = try values.decode(Bool.self, forKey: .hasTags)
+        self.accessKey = try? values.decode(String.self, forKey: .accessKey)
+        self.postId = try? values.decode(Int.self, forKey: .postId)
+        self.sizes = try values.decode([VKPhotoSize].self, forKey: .sizes)
+        self.imageUrlString = sizes.first(where: { photoSize in
+            photoSize.width > 200
+        })?.urlString
+        self.text = try values.decode(String.self, forKey: .text)
+        self.userId = try values.decode(Int.self, forKey: .userId)
+        self.likes = try? values.decode(VKLikes.self, forKey: .likes)
+        self.reposts = try? values.decode(VKReposts.self, forKey: .reposts)
+        self.comments = try? values.decode(VKComments.self, forKey: .comments)
+        self.canComment = try? values.decode(Int.self, forKey: .canComment) == 1 ? true : false
+        self.canRepost = try? values.decode(Int.self, forKey: .canRepost) == 1 ? true : false
     }
     
 }

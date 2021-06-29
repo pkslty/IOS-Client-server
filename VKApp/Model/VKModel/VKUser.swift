@@ -11,14 +11,13 @@ struct VKUser: Decodable {
     let firstName: String
     let id: Int
     let lastName: String
-    let nickName: String
     let avatarUrlString: String
+    var fullName: String {"\(firstName) \(lastName)"}
     
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"
         case id
         case lastName = "last_name"
-        case nickName = "nickname"
         case avatarUrlString = "photo_200_orig"
     }
 }
