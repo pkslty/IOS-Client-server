@@ -44,9 +44,9 @@ class NewsViewController: UIViewController, UICollectionViewDelegate{
         newsCollection.register(UINib(nibName: "NewsTextCell", bundle: nil), forCellWithReuseIdentifier: "NewsTextCell")
         newsCollection.register(UINib(nibName: "NewsImageCell", bundle: nil), forCellWithReuseIdentifier: "NewsImageCell")
         newsCollection.register(UINib(nibName: "NewsActionsCell", bundle: nil), forCellWithReuseIdentifier: "NewsActionsCell")
+        newsCollection.register(UINib(nibName: "NewsVideoCell", bundle: nil), forCellWithReuseIdentifier: "NewsVideoCell")
         
-        let ns = NetworkService()
-        ns.performVkMethod(method: "newsfeed.get", with: ["count":"100"]) { [weak self] data in
+        NetworkService.performVkMethod(method: "newsfeed.get", with: ["count":"100", "filters":"post"]) { [weak self] data in
             let json = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)
             do {
                 let response = (try JSONDecoder().decode(VKResponse<VKNewsFeed>.self, from: data)).response
@@ -58,17 +58,13 @@ class NewsViewController: UIViewController, UICollectionViewDelegate{
             } catch let error {
                 print("error is \(error)")
             }
-            
-            //print(vkNews)
-            //print(json)
         }
         
+        //newsCollection.backgroundColor = .systemBackground
         
         
-        // Do any additional setup after loading the view.
     }
     
-
 
 }
 
@@ -85,15 +81,26 @@ extension NewsViewController: UICollectionViewDataSource {
         var photosNum = 0
         var currentItem = 0
         var numberOfItems = 1
+        var vkNew: VKNew
         cellType[currentItem] = .author
         cellDescriptor[currentItem] = cellDataDescription(type: .author)
-        if vkNews[section].text != nil {
+        if let repost = vkNews[section].copyHistory,
+           repost.count > 0 {
+            vkNew = repost.first!
+            print(vkNew)
+            currentItem += 1
+            numberOfItems += 1
+            cellDescriptor[currentItem] = cellDataDescription(type: .repostAuthor)
+        } else {
+            vkNew = vkNews[section]
+        }
+        if vkNew.text != nil {
             numberOfItems += 1
             currentItem += 1
             cellType[currentItem] = .text
             cellDescriptor[currentItem] = cellDataDescription(type: .text)
         }
-        if let photos = vkNews[section].photos {
+        if let photos = vkNew.photos {
             photos.items.enumerated().forEach { (num, photo) in
                 photosNum += 1
                 numberOfItems += 1
@@ -102,7 +109,7 @@ extension NewsViewController: UICollectionViewDataSource {
                 cellDescriptor[currentItem] = cellDataDescription(type: .photo, photoNum: num)
             }
         }
-        if let attachments = vkNews[section].attachments {
+        if let attachments = vkNew.attachments {
             attachments.enumerated().forEach { (num, attachment) in
                 switch attachment.type {
                 case "photo":
@@ -140,24 +147,53 @@ extension NewsViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var plus: Int? = nil
-        guard let celltype = cellsTypes[indexPath.section]?[indexPath.row],
-              let cellDataDescription = cellsDataDesriptions[indexPath.section]?[indexPath.row]
+        var vkNew: VKNew
+        
+        guard let cellDataDescription = cellsDataDesriptions[indexPath.section]?[indexPath.row]
         else { return UICollectionViewCell() }
-        let ns = NetworkService()
+        
+        let isRepost = vkNews[indexPath.section].copyHistory != nil ? true : false
+        if isRepost {
+            vkNew = (vkNews[indexPath.section].copyHistory?.first!)!
+            vkNew.sourceId = vkNew.ownerId
+        }
+        else {
+            vkNew = vkNews[indexPath.section]
+        }
+        
         switch cellDataDescription.type {
         case .author:
             guard let cell = newsCollection.dequeueReusableCell(withReuseIdentifier: "NewsAuthorCell", for: indexPath) as? NewsAuthorCell
             
             else { return UICollectionViewCell() }
             
-            if vkNews[indexPath.section].sourceId > 0 {
-                ns.getUserById(id: vkNews[indexPath.section].sourceId) { [weak self] user in
-                    cell.configure(imageUrlString: user.first!.avatarUrlString, name: user.first!.fullName, date: (self?.vkNews[indexPath.section].date)!)
+            
+            if vkNews[indexPath.section].sourceId! > 0 {
+                NetworkService.getUserById(id: vkNews[indexPath.section].sourceId!) { [weak self] user in
+                    cell.configure(imageUrlString: user.first!.avatarUrlString, name: user.first!.fullName, date: (self?.vkNews[indexPath.section].date)!, isRepost: false)
                 }
             }
             else {
-                ns.getGroupById(id: abs(vkNews[indexPath.section].sourceId)) { [weak self] group in
-                    cell.configure(imageUrlString: group.first!.photo200UrlString!, name: group.first!.name, date: (self?.vkNews[indexPath.section].date)!)
+                NetworkService.getGroupById(id: abs(vkNews[indexPath.section].sourceId!)) { [weak self] group in
+                    cell.configure(imageUrlString: group.first!.photo200UrlString!, name: group.first!.name, date: (self?.vkNews[indexPath.section].date)!, isRepost: false)
+                }
+            }
+            return cell
+            
+        case .repostAuthor:
+            guard let cell = newsCollection.dequeueReusableCell(withReuseIdentifier: "NewsAuthorCell", for: indexPath) as? NewsAuthorCell
+            
+            else { return UICollectionViewCell() }
+            
+            
+            if vkNew.sourceId! > 0 {
+                NetworkService.getUserById(id: vkNew.sourceId!) { [weak self] user in
+                    cell.configure(imageUrlString: user.first!.avatarUrlString, name: user.first!.fullName, date: vkNew.date, isRepost: isRepost)
+                }
+            }
+            else {
+                NetworkService.getGroupById(id: abs(vkNew.sourceId!)) { [weak self] group in
+                    cell.configure(imageUrlString: group.first!.photo200UrlString!, name: group.first!.name, date: vkNew.date, isRepost: isRepost)
                 }
             }
             
@@ -168,7 +204,7 @@ extension NewsViewController: UICollectionViewDataSource {
                 
             else { return UICollectionViewCell() }
                 
-            cell.configure(text: vkNews[indexPath.section].text!)
+            cell.configure(text: vkNew.text!)
                 
             return cell
             
@@ -181,10 +217,10 @@ extension NewsViewController: UICollectionViewDataSource {
                 plus = posts[indexPath.section].images.count - indexPath.row + rowdecr - 1
             }*/
             if type == .photo {
-                cell.configure(imageUrlString: (vkNews[indexPath.section].photos?.items[cellDataDescription.photoNum!].imageUrlString) ?? "none", plus: nil)
+                cell.configure(imageUrlString: (vkNew.photos?.items[cellDataDescription.photoNum!].imageUrlString) ?? "none", plus: nil)
             }
             else {
-                cell.configure(imageUrlString: (vkNews[indexPath.section].attachments?[cellDataDescription.photoNum!].photo?.imageUrlString) ?? "none", plus: nil)
+                cell.configure(imageUrlString: (vkNew.attachments?[cellDataDescription.photoNum!].photo?.imageUrlString) ?? "none", plus: nil)
             }
             return cell
         case .actions:
@@ -192,7 +228,38 @@ extension NewsViewController: UICollectionViewDataSource {
             
             else { return UICollectionViewCell() }
             
-            cell.configure(likes: 10, tag: 1, state: true)
+            cell.configure(likes: vkNews[indexPath.section].likes,
+                           reposts: vkNews[indexPath.section].reposts,
+                           tag: indexPath.section)
+            
+            return cell
+        case .video:
+            guard let cell = newsCollection.dequeueReusableCell(withReuseIdentifier: "NewsVideoCell", for: indexPath) as? NewsVideoCell
+            
+            else { return UICollectionViewCell() }
+            
+            let ownerId = String((vkNew
+                .attachments?[cellDataDescription.photoNum!]
+                .video?.ownerId)!)
+            let id = String((vkNew
+                .attachments?[cellDataDescription.photoNum!]
+                .video?.id)!)
+            let accessKey = String((vkNew
+                .attachments?[cellDataDescription.photoNum!]
+                .video?.accessKey)!)
+            let videos = "\(ownerId)_\(id)_\(accessKey)"
+            print("VIDEOS is \(videos)")
+            NetworkService.performVkMethod(method: "video.get", with: ["owner_id":ownerId, "videos":videos]) { data in
+                do {
+                    let videos = try JSONDecoder().decode(VKResponse<VKItems<VKVideo>>.self, from: data)
+                    let player = videos.response.items[0].player
+                    print("player: \(player)")
+                    cell.configure(videoUrlString: player ?? "none", plus: nil)
+                } catch let error {
+                    print("error is \(error)")
+                }
+            }
+
             
             return cell
         default:
@@ -203,7 +270,7 @@ extension NewsViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if posts[indexPath.section].isImagesFolded {
+        /*if posts[indexPath.section].isImagesFolded {
             if let celltype = cellsTypes[indexPath.section]?[indexPath.row]{
                 if celltype.rawValue == 3 {//image
                     for section in 0 ..< posts.count {
@@ -226,7 +293,7 @@ extension NewsViewController: UICollectionViewDataSource {
             }
         }
         newsCollection.scrollToItem(at: indexPath, at: UICollectionView.ScrollPosition.centeredVertically, animated: true)
-    }
+    */}
 }
 
 

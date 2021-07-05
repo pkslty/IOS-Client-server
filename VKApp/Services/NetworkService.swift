@@ -8,17 +8,17 @@
 import UIKit
 
 class NetworkService {
-    private let session = URLSession.shared
-    private var url: URLComponents = {
+    static private let session = URLSession.shared
+    static private var url: URLComponents = {
         var urlConstructor = URLComponents()
         urlConstructor.scheme = "https"
         urlConstructor.host = "api.vk.com"
         return urlConstructor
         }()
-    private let api_version = "5.132"
+    static private let api_version = "5.132"
     
     
-    func getFriends(of userId: Int = Session.Instance.userId, completionBlock: @escaping ([VKRealmUser]) -> Void) {
+    static func getFriends(of userId: Int = Session.Instance.userId, completionBlock: @escaping ([VKRealmUser]) -> Void) {
         let parameters = [
             "order" : "hints",
             "fields" : "nickname,photo_200_orig",
@@ -34,7 +34,7 @@ class NetworkService {
         }
     }
     
-    func getUserById(id: Int, completionBlock: @escaping ([VKUser]) -> Void) {
+    static func getUserById(id: Int, completionBlock: @escaping ([VKUser]) -> Void) {
         let parameters = [
             "user_ids" : String(id),
             "fields" : "photo_200_orig",
@@ -51,7 +51,7 @@ class NetworkService {
         }
     }
     
-    func getGroupById(id: Int, completionBlock: @escaping ([VKGroup]) -> Void) {
+    static func getGroupById(id: Int, completionBlock: @escaping ([VKGroup]) -> Void) {
         let parameters = [
             "group_ids" : String(id),
             "fields" : "photo_200",
@@ -68,13 +68,13 @@ class NetworkService {
         }
     }
     
-    func performVkMethod(method: String, with parameters: [String: String], token: String = Session.Instance.token, completionBlock: @escaping (Data) -> Void) {
+    static func performVkMethod(method: String, with parameters: [String: String], token: String = Session.Instance.token, completionBlock: @escaping (Data) -> Void) {
         request(method: method, parameters: parameters, token: token) { data in
             completionBlock(data)
         }
     }
     
-    func getGroups(of userId: Int = Session.Instance.userId, callBack: @escaping ([VKRealmGroup]) -> Void) {
+    static func getGroups(of userId: Int = Session.Instance.userId, callBack: @escaping ([VKRealmGroup]) -> Void) {
         let parameters = [
             "extended" : "1",
             "user_id" : String(userId),
@@ -90,7 +90,7 @@ class NetworkService {
         }
     }
     
-    func searchGroups(by query: String, resultsCount: Int, completionBlock: @escaping ([VKRealmGroup]) -> Void) {
+    static func searchGroups(by query: String, resultsCount: Int, completionBlock: @escaping ([VKRealmGroup]) -> Void) {
         let parameters = [
             "q" : query,
             "count" : String(resultsCount),
@@ -106,7 +106,7 @@ class NetworkService {
 
     }
     
-    func getPhotos(of userId: Int, completionBlock: @escaping ([VKRealmPhoto]) -> Void) {
+    static func getPhotos(of userId: Int, completionBlock: @escaping ([VKRealmPhoto]) -> Void) {
         let parameters = [
             "owner_id" : String(userId),
             "extended" : "1",
@@ -125,7 +125,7 @@ class NetworkService {
 
     }
     
-    private func request(method: String, parameters: [String: String], token: String = Session.Instance.token, completionBlock: @escaping (Data) -> Void) {
+    static private func request(method: String, parameters: [String: String], token: String = Session.Instance.token, completionBlock: @escaping (Data) -> Void) {
         url.path = "/method/" + method
         url.queryItems = [
             URLQueryItem(name: "access_token", value: token),
@@ -157,7 +157,7 @@ class NetworkService {
 
     }
     
-    func getData(from url: String, completionBlock: @escaping (Data) -> Void) {
+    static func getData(from url: String, completionBlock: @escaping (Data) -> Void) {
         guard let url = URL(string: url)
         else {
             print("NetworkService error: Invalid url")

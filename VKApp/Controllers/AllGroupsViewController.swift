@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import FirebaseFirestore
 
 class AllGroupsViewController: UIViewController, UITableViewDelegate {
 
@@ -19,7 +18,6 @@ class AllGroupsViewController: UIViewController, UITableViewDelegate {
     @IBOutlet weak var groupsTable: UITableView!
     
     var foundedGroups = [VKRealmGroup]()
-    private let firestore = Firestore.firestore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -116,18 +114,16 @@ extension AllGroupsViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         guard let searchText = searchBar.text else { return }
-        let ns = NetworkService()
-        ns.searchGroups(by: searchText, resultsCount: 100) { [weak self] groups in
+        NetworkService.searchGroups(by: searchText, resultsCount: 100) { [weak self] groups in
             self?.foundedGroups = groups
             self?.groupsTable.reloadData()
         }
         
     }
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+    /*func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         guard let searchtext = searchBar.text else { return }
         //filterRows(by: searchtext)
-        let ns = NetworkService()
-        ns.searchGroups(by: searchtext, resultsCount: 10) { [weak self] groups in
+        NetworkService.searchGroups(by: searchtext, resultsCount: 10) { [weak self] groups in
             groups.forEach { group in
                 self?.firestore
                     .collection("users")
@@ -148,7 +144,7 @@ extension AllGroupsViewController: UISearchBarDelegate {
             
             
         }
-    }
+    }*/
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.endEditing(true)

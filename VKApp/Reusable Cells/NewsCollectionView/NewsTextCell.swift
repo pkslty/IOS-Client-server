@@ -9,7 +9,7 @@ import UIKit
 
 class NewsTextCell: UICollectionViewCell {
 
-    @IBOutlet weak var text: UILabel!
+    @IBOutlet weak var text: UITextView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

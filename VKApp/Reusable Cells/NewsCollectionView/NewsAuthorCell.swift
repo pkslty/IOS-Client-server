@@ -29,4 +29,11 @@ class NewsAuthorCell: UICollectionViewCell {
         
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        authorName.text = String()
+        postDate.text = String()
+        authorPhoto.image = nil
+    }
+    
 }

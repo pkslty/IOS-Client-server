@@ -5,8 +5,11 @@
 //  Created by Denis Kuzmin on 27.05.2021.
 //
 
-import Foundation
+import UIKit
+
 struct VKPhoto: Decodable {
+    let prefferedPhotoSizes = ["y", "x", "z", "w", "m", "r", "q", "p", "o", "s"]
+    var proportions: CGFloat
     let albumId: Int
     let date: Double
     let id: Int
@@ -16,7 +19,7 @@ struct VKPhoto: Decodable {
     let postId: Int?
     let sizes: [VKPhotoSize]
     let text: String
-    let userId: Int
+    let userId: Int?
     let likes: VKLikes?
     let reposts: VKReposts?
     let comments: VKComments?
@@ -55,16 +58,34 @@ struct VKPhoto: Decodable {
         self.accessKey = try? values.decode(String.self, forKey: .accessKey)
         self.postId = try? values.decode(Int.self, forKey: .postId)
         self.sizes = try values.decode([VKPhotoSize].self, forKey: .sizes)
-        self.imageUrlString = sizes.first(where: { photoSize in
-            photoSize.width > 200
-        })?.urlString
+        //self.imageUrlString = sizes.first(where: { photoSize in
+        //    photoSize.width > 200
+        //})?.urlString
         self.text = try values.decode(String.self, forKey: .text)
-        self.userId = try values.decode(Int.self, forKey: .userId)
+        self.userId = try? values.decode(Int.self, forKey: .userId)
         self.likes = try? values.decode(VKLikes.self, forKey: .likes)
         self.reposts = try? values.decode(VKReposts.self, forKey: .reposts)
         self.comments = try? values.decode(VKComments.self, forKey: .comments)
         self.canComment = try? values.decode(Int.self, forKey: .canComment) == 1 ? true : false
         self.canRepost = try? values.decode(Int.self, forKey: .canRepost) == 1 ? true : false
+        
+        var num: Int = 0
+        var canExit = false
+        for psize in prefferedPhotoSizes {
+            for (i, size) in sizes.enumerated() {
+                if size.type == psize {
+                    num = i
+                    print("psize=\(psize) vs size = \(size)")
+                    canExit = true
+                }
+            }
+            if canExit {
+                break
+            }
+        }
+
+        self.imageUrlString = sizes[num].urlString
+        self.proportions = CGFloat(sizes[num].height / sizes[num].width)
     }
     
 }

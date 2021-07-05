@@ -9,16 +9,16 @@ import UIKit
 
 class FriendPhotoCell: UICollectionViewCell {
     
-    @IBOutlet weak var likeButton: LikeButton!
+    @IBOutlet weak var likeButton: ActionButton!
     @IBOutlet weak var photo: UIImageView!
     var photoframe = CGRect.zero
     
     
     func config(image: VKRealmPhoto, tag: Int) {
-        likeButton.likes = 0
+        likeButton.count = 0
         //photo.image = image
         likeButton.tag = tag
-        likeButton.isLiked = false
+        likeButton.pressed = false
         ImageLoader.getImage(from: image.imageUrlString ?? "none") {[weak self] image in
             self?.photo.image = image
         }

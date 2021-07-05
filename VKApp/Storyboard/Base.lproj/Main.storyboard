@@ -282,7 +282,7 @@
                                                 <constraint firstAttribute="width" constant="380" id="zas-ar-Sre"/>
                                             </constraints>
                                         </imageView>
-                                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="POQ-qj-ac0" customClass="LikeButton" customModule="VKApp" customModuleProvider="target">
+                                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="POQ-qj-ac0" customClass="ActionButton" customModule="VKApp" customModuleProvider="target">
                                             <rect key="frame" x="287" y="345" width="103" height="47"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -639,7 +639,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="kud-Fp-MQd"/>
+        <segue reference="RtD-vl-UcC"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="lock.fill" catalog="system" width="128" height="128"/>

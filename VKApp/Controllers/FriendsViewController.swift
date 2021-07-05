@@ -123,8 +123,7 @@ class FriendsViewController: UIViewController, UITableViewDelegate {
     }
     
     private func updateFriends() {
-        let networkService = NetworkService()
-        networkService.getFriends { [weak self] friends in
+        NetworkService.getFriends { [weak self] friends in
             do {
                 try RealmService.save(items: friends)
             } catch let error {

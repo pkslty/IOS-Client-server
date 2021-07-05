@@ -8,12 +8,13 @@
 import Foundation
 
 struct VKNew: Decodable {
-    let type: String
-    let sourceId: Int
+    let type: String?
+    var sourceId: Int?
     let date: Double
     let postId: Int?
     let postType: String?
     let copyOwnerId: Int?
+    let ownerId: Int?
     let copyPostId: Int?
     let copyHistory: [VKNew]?
     let copyPostDate: Double?
@@ -42,6 +43,7 @@ struct VKNew: Decodable {
         case postId = "post_id"
         case postType = "post_type"
         case copyOwnerId = "copy_owner_id"
+        case ownerId = "owner_id"
         case copyPostId = "copy_post_id"
         case copyHistory = "copy_history"
         case copyPostDate = "copy_post_date"
@@ -62,13 +64,19 @@ struct VKNew: Decodable {
     
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        self.type = try values.decode(String.self, forKey: .type)
-        self.sourceId = try values.decode(Int.self, forKey: .sourceId)
+        self.type = try? values.decode(String.self, forKey: .type)
+        self.sourceId = try? values.decode(Int.self, forKey: .sourceId)
         self.date = try values.decode(Double.self, forKey: .date)
         self.postId = try? values.decode(Int.self, forKey: .postId)
         self.postType = try? values.decode(String.self, forKey: .postType)
         self.copyOwnerId = try? values.decode(Int.self, forKey: .copyOwnerId)
+        self.ownerId = try? values.decode(Int.self, forKey: .ownerId)
         self.copyPostId = try? values.decode(Int.self, forKey: .copyPostId)
+        /*do {
+        self.copyHistory = try values.decode([VKNew].self, forKey: .copyHistory)
+        } catch let error {
+            print(error)
+        }*/
         self.copyHistory = try? values.decode([VKNew].self, forKey: .copyHistory)
         self.copyPostDate = try? values.decode(Double.self, forKey: .copyPostDate)
         self.text = try? values.decode(String.self, forKey: .text)

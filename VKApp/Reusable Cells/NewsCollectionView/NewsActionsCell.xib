@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -20,18 +20,41 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YLV-Ew-zNK">
                         <rect key="frame" x="0.0" y="0.0" width="396" height="227"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbu-ze-woO" customClass="LikeButton" customModule="VKApp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="100" height="227"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbu-ze-woO" customClass="ActionButton" customModule="VKApp" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="70" height="227"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="L5q-zw-9am"/>
+                                    <constraint firstAttribute="width" constant="70" id="L5q-zw-9am"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="type">
+                                        <integer key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lT3-Tg-HG1" customClass="ActionButton" customModule="VKApp" customModuleProvider="target">
+                                <rect key="frame" x="78" y="0.0" width="70" height="227"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="70" id="mkx-TE-3ha"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="type">
+                                        <integer key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                        <color key="value" systemColor="systemGrayColor"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="lT3-Tg-HG1" firstAttribute="leading" secondItem="lbu-ze-woO" secondAttribute="trailing" constant="8" id="Jo7-Go-Cvn"/>
+                            <constraint firstItem="lT3-Tg-HG1" firstAttribute="top" secondItem="YLV-Ew-zNK" secondAttribute="top" id="RHL-dz-Khl"/>
                             <constraint firstItem="lbu-ze-woO" firstAttribute="leading" secondItem="YLV-Ew-zNK" secondAttribute="leading" id="RYi-kP-dGo"/>
                             <constraint firstItem="lbu-ze-woO" firstAttribute="top" secondItem="YLV-Ew-zNK" secondAttribute="top" id="WIz-CN-2xa"/>
+                            <constraint firstAttribute="bottom" secondItem="lT3-Tg-HG1" secondAttribute="bottom" id="opQ-Jy-cXb"/>
                             <constraint firstItem="lbu-ze-woO" firstAttribute="height" secondItem="YLV-Ew-zNK" secondAttribute="height" id="pma-hr-nUZ"/>
                         </constraints>
                     </view>
@@ -47,6 +70,7 @@
             <size key="customSize" width="396" height="227"/>
             <connections>
                 <outlet property="likeButton" destination="lbu-ze-woO" id="HTH-Bq-zLb"/>
+                <outlet property="repostButton" destination="lT3-Tg-HG1" id="NzO-W4-IJJ"/>
             </connections>
             <point key="canvasLocation" x="333.33333333333337" y="167.07589285714286"/>
         </collectionViewCell>
@@ -54,6 +78,9 @@
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGrayColor">
+            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

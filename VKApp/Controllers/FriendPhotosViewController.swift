@@ -119,7 +119,7 @@ class FriendPhotosViewController: UICollectionViewController {
         return cell
     }
     
-    @objc private func likeButtonValueChanged(_ likeButton: LikeButton) {
+    @objc private func likeButtonValueChanged(_ likeButton: ActionButton) {
         /*friend?.photos[likeButton.tag].likes = likeButton.likes
         let _ = likeButton.isLiked ?
             friend?.photos[likeButton.tag].likers.insert(username!) :
@@ -141,8 +141,7 @@ class FriendPhotosViewController: UICollectionViewController {
     }
     
     private func updatePhotos() {
-        let ns = NetworkService()
-        ns.getPhotos(of: friendId) { [weak self] photos in
+        NetworkService.getPhotos(of: friendId) { [weak self] photos in
             print(photos)
             try? RealmService.save(items: photos)
             //self?.collectionView.reloadData()

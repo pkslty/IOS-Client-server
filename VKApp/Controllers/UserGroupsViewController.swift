@@ -114,8 +114,7 @@ class UserGroupsViewController: UITableViewController {
     }
     
     private func updateGroups() {
-        let ns = NetworkService()
-        ns.getGroups { [weak self] groups in
+        NetworkService.getGroups { [weak self] groups in
             try? RealmService.save(items: groups)
         }
     }
