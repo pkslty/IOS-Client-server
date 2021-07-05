@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 
 class PhotoPresenterViewController: UIViewController {
@@ -33,7 +34,7 @@ class PhotoPresenterViewController: UIViewController {
     var transformRight = CATransform3D()
     var transformLeft = CATransform3D()
     
-    var images = [(image: UIImage, likes: Int, likers: Set<String>)]()
+    var images: Results<VKRealmPhoto>?
     var currentImage: Int = 0
     var rect = CGRect.zero
     var targetFrame = CGRect.zero
@@ -42,7 +43,7 @@ class PhotoPresenterViewController: UIViewController {
     var isZooming = false
     var currentImageScale : CGFloat = 1.0
     var lastTransform = CGAffineTransform()
-    
+ 
     private var isHidedBars = false {
         didSet {
             isHidedBars ? hideBars() : showBars()
@@ -53,7 +54,7 @@ class PhotoPresenterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard images.count > 0 else { return }
+        guard images!.count > 0 else { return }
         
         let panGR = UIPanGestureRecognizer(target: self, action: #selector(panTrack))
         let tapGR = UITapGestureRecognizer(target: self, action: #selector(tapAction))
@@ -70,17 +71,22 @@ class PhotoPresenterViewController: UIViewController {
         view.addGestureRecognizer(tapGR)
         view.addGestureRecognizer(doubleTapGR)
         view.addGestureRecognizer(pinchGR)
-        rect = calculateRect(image: images[currentImage].image)
+        ImageLoader.getImage(from: images![currentImage].imageUrlString!) { image in
+            let rect = self.calculateRect(image: image!)
+            self.mainImageView.image = image!
+            self.mainImageView.frame = rect
+            self.mainImageView.bounds = rect
+            print("Image in closure: \(image!)")
+        }
+        //rect = calculateRect(image: images[currentImage].image)
         print("rect is \(rect)")
         //rect = CGRect(x: 0, y: y, width: view.frame.width, height: height)
         navigationController?.navigationBar.isOpaque = false
         navigationController?.navigationBar.isHidden = false
         tabBarController?.tabBar.isOpaque = false
         tabBarController?.tabBar.isHidden = false
+        //mainImageView.image = images[currentImage].image
         
-        mainImageView.image = images[currentImage].image
-        mainImageView.frame = rect
-        mainImageView.bounds = rect
         print("mainImageView frame: \(mainImageView.frame)")
         mainImageView.contentMode = .scaleAspectFit
         print("mainImageView frame: \(mainImageView.frame)")
@@ -183,7 +189,7 @@ class PhotoPresenterViewController: UIViewController {
                         makeLeftAnimator()
                     }
                     x = x > -maxPanDistance ? x : -maxPanDistance
-                    if currentImage == images.count - 1 {
+                    if currentImage == images!.count - 1 {
                         x = x / 2
                     }
                     propertyAnimator?.fractionComplete = x / -maxPanDistance
@@ -241,7 +247,7 @@ class PhotoPresenterViewController: UIViewController {
                     if (propertyAnimator.fractionComplete > 0.5  || //Если больше половины
                             abs(speed) > noReturnSpeed && speed * animatorKind!.rawValue > 0) && //Скорость больше предельной и соответствует направлению аниматора
                         !(currentImage == 0 && x > 0) && //Если не первая картинка и движение вправо
-                        !(currentImage == images.count - 1 && x < 0) //Если не последняя картинка и движение влево
+                        !(currentImage == images!.count - 1 && x < 0) //Если не последняя картинка и движение влево
                     {
                         let direction = x < 0 ? 1 : -1
                         propertyAnimator.addCompletion { [self] _ in
@@ -277,10 +283,15 @@ class PhotoPresenterViewController: UIViewController {
         secondImageView.bounds = rect
         secondImageView.contentMode = .scaleAspectFit
         secondImageView.clipsToBounds = true
-        if currentImage <= images.count - 2 {
-            secondImageView.image = images[currentImage + 1].image
-            secondImageView.frame = calculateRect(image: images[currentImage + 1].image)
-            secondImageView.bounds = calculateRect(image: images[currentImage + 1].image)
+        if currentImage <= images!.count - 2 {
+            ImageLoader.getImage(from: images![currentImage + 1].imageUrlString!) { image in
+                self.secondImageView.image = image!
+                self.secondImageView.frame = self.calculateRect(image: image!)
+                self.secondImageView.bounds = self.calculateRect(image: image!)
+            }
+            //secondImageView.image = images[currentImage + 1].image
+            //secondImageView.frame = calculateRect(image: images[currentImage + 1].image)
+            //secondImageView.bounds = calculateRect(image: images[currentImage + 1].image)
         }
         let keyframes = makeKeyframes()
         secondImageView.layer.transform = keyframes[0].5
@@ -312,9 +323,14 @@ class PhotoPresenterViewController: UIViewController {
         //Если это первая картинка, то secondImageView будет пустой
         //Нельзя допусть завершение аниматора с currentImage == 0
         if currentImage > 0 {
-            secondImageView.image = images[currentImage-1].image
-            secondImageView.frame = calculateRect(image: images[currentImage-1].image)
-            secondImageView.bounds = calculateRect(image: images[currentImage-1].image)
+            ImageLoader.getImage(from: images![currentImage - 1].imageUrlString!) { image in
+                self.secondImageView.image = image!
+                self.secondImageView.frame = self.calculateRect(image: image!)
+                self.secondImageView.bounds = self.calculateRect(image: image!)
+            }
+            //secondImageView.image = images[currentImage-1].image
+            //secondImageView.frame = calculateRect(image: images[currentImage-1].image)
+            //secondImageView.bounds = calculateRect(image: images[currentImage-1].image)
         }
         let keyframes = makeKeyframes()
         secondImageView.layer.transform = keyframes[1].5

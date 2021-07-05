@@ -15,6 +15,7 @@ class NewsCollectionViewLayout: UICollectionViewLayout {
     let authorCellHeight: CGFloat = 60
     let actionsCellHeight: CGFloat = 30
     let textCellHeight: CGFloat = 128
+    let cellInterval: CGFloat = 3
     //var section: Int
 
     private var totalCellsHeight: CGFloat = 0
@@ -35,36 +36,64 @@ class NewsCollectionViewLayout: UICollectionViewLayout {
             
             let cellWidth = collectionView.frame.width
             let imageCellHeight = cellWidth
-            var firstImageInRow = true
+            //var firstImageInRow = true
             //var lastY = CGFloat.zero
             for index in 0 ..< itemsCount {
                 let indexPath = IndexPath(item: index, section: section)
                 let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
-                switch index {
-                //Author name and date
-                case 0:
-                    attributes.frame = CGRect(x: 0, y: lastY, width: cellWidth, height: authorCellHeight)
-                    lastY += authorCellHeight
+                let cellDataDescriptor = newsController.cellsDataDesriptions[section]?[index]
+                switch cellDataDescriptor?.type {
+                case .author, .repostAuthor:
+                    attributes.frame = CGRect(x: 0, y: lastY + cellInterval, width: cellWidth, height: authorCellHeight)
+                    lastY += authorCellHeight + cellInterval
                     
                 //Last cell with likes, repost, etc
-                case let count where count == itemsCount - 1:
-                    attributes.frame = CGRect(x: 0, y: lastY, width: cellWidth, height: actionsCellHeight)
-                    lastY += actionsCellHeight
+                case .actions:
+                    attributes.frame = CGRect(x: 0, y: lastY + cellInterval, width: cellWidth, height: actionsCellHeight)
+                    lastY += actionsCellHeight + cellInterval
                     
                 //Cell with the text if the text exists
-                case 1 where newsController.posts[section].text != nil:
-                    let cellHeightThatFits = UILabel.estimatedSize(newsController.posts[section].text!, targetSize: CGSize(width: cellWidth, height: .zero)).height
+                case .text:
+                    if let text = newsController.vkNews[section].copyHistory == nil ?
+                        newsController.vkNews[section].text :
+                        newsController.vkNews[section].copyHistory?.first?.text {
+                    let cellHeightThatFits = UITextView.estimatedSize(text, targetSize: CGSize(width: cellWidth, height: .zero)).height
                     //newsController.textCellHeightsThatFits[section] = cellHeightThatFits
                     var cellHeight = textCellHeight
-                    if !newsController.posts[section].isTextFolded || textCellHeight > cellHeightThatFits {
+                        cellHeight = cellHeightThatFits + 20
+                    /*if !newsController.vkNews[section].isTextFolded || textCellHeight > cellHeightThatFits {
                         cellHeight = cellHeightThatFits
+                    }*/
+                    attributes.frame = CGRect(x: 0, y: lastY + cellInterval, width: cellWidth, height: cellHeight)
+                    lastY += cellHeight + cellInterval
                     }
-                    attributes.frame = CGRect(x: 0, y: lastY, width: cellWidth, height: cellHeight)
-                    lastY += cellHeight
                     
-                //All other cells with images
+                case let type where type == .photo || type == .attachmentPhoto:
+                    var imageHeight = CGFloat.zero
+                    var vkNew: VKNew
+                    let photoNum = cellDataDescriptor?.photoNum!
+                        if newsController.vkNews[section].copyHistory != nil {
+                            vkNew = (newsController.vkNews[section].copyHistory?.first!)!
+                        }
+                        else {
+                            vkNew = newsController.vkNews[section]
+                        }
+                            if type == .photo {
+                                let photo = vkNew.photos!.items[photoNum!]
+                                imageHeight = photo.proportions * cellWidth
+                        }
+                            else {
+                                let photo = vkNew.attachments![photoNum!].photo!
+                                imageHeight = photo.proportions * cellWidth
+                            }
+
+                    attributes.frame = CGRect(x: 0, y: lastY + cellInterval, width: cellWidth, height: imageHeight)
+                    lastY += imageHeight + cellInterval
+                case .video:
+                    attributes.frame = CGRect(x: 0, y: lastY + cellInterval, width: cellWidth, height: imageCellHeight)
+                    lastY += imageCellHeight + cellInterval
                 default:
-                    if newsController.posts[section].isImagesFolded {
+                    /*if newsController.posts[section].isImagesFolded {
                         switch newsController.posts[section].images.count {
                         case 1:
                             attributes.frame = CGRect(x: 0, y: lastY, width: cellWidth, height: imageCellHeight)
@@ -85,7 +114,8 @@ class NewsCollectionViewLayout: UICollectionViewLayout {
                     } else {
                         attributes.frame = CGRect(x: 0, y: lastY, width: cellWidth, height: imageCellHeight)
                         lastY += imageCellHeight
-                    }
+                    }*/
+                    print("whatever")
                 }
                 totalCellsHeight = lastY
                 cacheAttributes[indexPath] = attributes
@@ -110,12 +140,11 @@ class NewsCollectionViewLayout: UICollectionViewLayout {
     }
 }
 
-extension UILabel {
+extension UITextView {
 
    public static func estimatedSize(_ text: String, targetSize: CGSize) -> CGSize {
-       let label = UILabel(frame: .zero)
-       label.numberOfLines = 0
-       label.text = text
-       return label.sizeThatFits(targetSize)
+       let textView = UITextView(frame: .zero)
+    textView.text = text
+       return textView.sizeThatFits(targetSize)
    }
 }

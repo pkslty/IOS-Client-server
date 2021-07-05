@@ -13,10 +13,12 @@ class GroupCell: UITableViewCell {
     @IBOutlet weak var groupDescriptionText: UILabel!
     @IBOutlet weak var groupImage: UIImageView!
    
-    func config(name: String, avatar: UIImage, description: String) {
+    func config(name: String, avatarUrlString: String, description: String) {
         groupCellText.text = name
         groupDescriptionText.text = description
-        groupImage.image = avatar
+        ImageLoader.getImage(from: avatarUrlString) { [weak self] image in
+            self?.groupImage.image = image
+        }
     }
 
 }

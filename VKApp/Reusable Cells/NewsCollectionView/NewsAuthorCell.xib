@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -24,7 +24,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="126" height="126"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jiN-NS-jSd" customClass="RoundShadowView" customModule="VKApp" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="5" width="116" height="116"/>
+                                        <rect key="frame" x="5" y="5" width="111" height="111"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="jiN-NS-jSd" secondAttribute="height" multiplier="1:1" id="2Zl-Ad-1R3"/>
@@ -34,13 +34,13 @@
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstItem="jiN-NS-jSd" firstAttribute="leading" secondItem="jFj-Wp-T9R" secondAttribute="leading" constant="10" id="AAl-42-gKh"/>
+                                    <constraint firstItem="jiN-NS-jSd" firstAttribute="leading" secondItem="jFj-Wp-T9R" secondAttribute="leading" constant="5" id="AAl-42-gKh"/>
                                     <constraint firstAttribute="width" secondItem="jFj-Wp-T9R" secondAttribute="height" multiplier="1:1" id="DgD-tD-85E"/>
                                     <constraint firstItem="jiN-NS-jSd" firstAttribute="top" secondItem="jFj-Wp-T9R" secondAttribute="top" constant="5" id="dEJ-cE-Z6G"/>
-                                    <constraint firstAttribute="bottom" secondItem="jiN-NS-jSd" secondAttribute="bottom" constant="5" id="g8P-eo-1v3"/>
+                                    <constraint firstAttribute="bottom" secondItem="jiN-NS-jSd" secondAttribute="bottom" constant="10" id="g8P-eo-1v3"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x0d-I9-v0Q">
+                            <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x0d-I9-v0Q">
                                 <rect key="frame" x="146" y="0.0" width="234" height="126"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ifa-yU-fHm">

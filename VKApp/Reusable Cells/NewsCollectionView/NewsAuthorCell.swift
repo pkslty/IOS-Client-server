@@ -19,11 +19,21 @@ class NewsAuthorCell: UICollectionViewCell {
         // Initialization code
     }
 
-    func configure(image: UIImage, name: String, date: Date) {
-        authorPhoto.image = image
-        authorName.text = name
-        postDate.text = date.description
+    func configure(imageUrlString: String, name: String, date: Double, isRepost: Bool = false) {
+        ImageLoader.getImage(from: imageUrlString) { [weak self] image in
+            self?.authorPhoto.image = image
+        }
         
+        authorName.text = isRepost ? "\u{21a9} \(name)" : name
+        postDate.text = NSDate(timeIntervalSince1970: date).description
+        
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        authorName.text = String()
+        postDate.text = String()
+        authorPhoto.image = nil
     }
     
 }

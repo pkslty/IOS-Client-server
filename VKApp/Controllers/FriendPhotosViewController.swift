@@ -6,14 +6,28 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FriendPhotosViewController: UICollectionViewController {
 
-    var friend: Person?
+    enum UpdateRowsMethod {
+        case update
+        case delete
+        case insert
+    }
+    
+    var friend: VKRealmUser?
+    var photos: Results<VKRealmPhoto>? {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     var friendNum: Int?
+    var friendId = 0
     var username: String?
     let animator = PushAnimation()
     var currentImage = 0
+    var token: NotificationToken?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,7 +36,37 @@ class FriendPhotosViewController: UICollectionViewController {
         //print(self.parent?.next)
         //navigationController?.delegate = self
         
+        getPhotos()
+        
+        token = photos?.observe({ changes in
+            switch changes {
+            case .initial:
+                self.collectionView.reloadData()
+            case .update(_, let deletions, let insertions, let modifications):
+                self.updateRows(for: modifications, method: .update)
+                self.updateRows(for: deletions, method: .delete)
+                self.updateRows(for: insertions, method: .insert)
+            case .error(let error):
+                print(error)
+            }
+        })
 
+    }
+    
+    private func updateRows(for vkPhotosModificatedIndexes: [Int], method: UpdateRowsMethod) {
+        var pathsToUpdate = [IndexPath]()
+        vkPhotosModificatedIndexes.forEach { index in
+            pathsToUpdate.append(IndexPath(row: index, section: 0))
+        }
+        guard pathsToUpdate.count > 0 else { return }
+        switch method {
+        case .update:
+            collectionView.reloadItems(at: pathsToUpdate)
+        case .delete:
+            collectionView.deleteItems(at: pathsToUpdate)
+        case .insert:
+            collectionView.insertItems(at: pathsToUpdate)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -38,7 +82,9 @@ class FriendPhotosViewController: UICollectionViewController {
             /*let index = IndexPath(row: currentImage, section: 0)
             print(index)
             collectionView.scrollToItem(at: index, at: UICollectionView.ScrollPosition.centeredVertically, animated: false)*/
+            
         }
+        updatePhotos()
     }
 
     
@@ -58,7 +104,7 @@ class FriendPhotosViewController: UICollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return (friend?.photos.count)!
+        return (photos!.count)
     }
 
     
@@ -66,37 +112,50 @@ class FriendPhotosViewController: UICollectionViewController {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FriendPhoto", for: indexPath) as? FriendPhotoCell
         else { return UICollectionViewCell() }
         
-        cell.config(image: (friend?.photos[indexPath.row].image)!,
-                    likes: (friend?.photos[indexPath.row].likes)!,
-                    tag: indexPath.row,
-                    state: (friend?.photos[indexPath.row].likers.contains(username!))!)
+        cell.config(image: (photos![indexPath.row]),
+                    tag: indexPath.row)
         cell.likeButton.addTarget(self, action: #selector(likeButtonValueChanged(_:)), for: .valueChanged)
     
         return cell
     }
     
-    @objc private func likeButtonValueChanged(_ likeButton: LikeButton) {
-        friend?.photos[likeButton.tag].likes = likeButton.likes
+    @objc private func likeButtonValueChanged(_ likeButton: ActionButton) {
+        /*friend?.photos[likeButton.tag].likes = likeButton.likes
         let _ = likeButton.isLiked ?
             friend?.photos[likeButton.tag].likers.insert(username!) :
-            friend?.photos[likeButton.tag].likers.remove(username!)
+            friend?.photos[likeButton.tag].likers.remove(username!)*/
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destinationVC = segue.destination as? PhotoPresenterViewController
         else { return}
-        destinationVC.images = friend!.photos
+        destinationVC.images = photos
         destinationVC.currentImage = (collectionView.indexPathsForSelectedItems?.first!.row)!
         //destinationVC.navigationController = navigationController
         //destinationVC.transitioningDelegate = self
     }
+    
+    private func getPhotos() {
+        photos = try? RealmService.load(typeOf: VKRealmPhoto.self)
+            .filter("ownerId == %i", friendId)
+    }
+    
+    private func updatePhotos() {
+        NetworkService.getPhotos(of: friendId) { [weak self] photos in
+            print(photos)
+            try? RealmService.save(items: photos)
+            //self?.collectionView.reloadData()
+        }
+    }
+
+    
     
 }
 
 extension FriendPhotosViewController: UINavigationControllerDelegate {
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        (viewController as? FriendsViewController)?.user?.friends[friendNum!].photos = friend!.photos
+        //(viewController as? FriendsViewController)?.user?.friends[friendNum!].photos = friend!.photos
     }
 }
 
